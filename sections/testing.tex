@@ -32,7 +32,7 @@ retransmissions before requesting the next chunk, helping to avoid stalls.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/stallduration_p2delay_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/stall_sn_loss_p2.pdf}
   \caption{Stall events. Test networks were 5Mbps with 0.2\%loss with variable delay. The 
            client using standard TCP suffers more from stalls than the client using TCP Hollywood, 
            with the latter being able to minimise stalls in the presence of high network delay.}
@@ -41,7 +41,7 @@ retransmissions before requesting the next chunk, helping to avoid stalls.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/stallduration_loss_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/stall_sn_delay_d100.pdf}
   \caption{Stall events. Test networks were 5Mbps with 100ms with variable loss rates. With 
            high loss rates, loss recovery can be delayed due to lost retransmissions, leading 
            to more stall events for client using standard TCP.}
@@ -81,7 +81,7 @@ shown in the graphs.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/startupdelay_p2delay_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/startup_sn_loss_p2.pdf}
   \caption{Start-up delay. Test networks were 5Mbps with 0.2\%loss with variable delay. 
            The higher the network latency, the greater the benefit of TCP Hollywood. }
   \label{fig:startup_delay2}
@@ -90,7 +90,7 @@ shown in the graphs.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/startupdelay_loss_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/startup_sn_delay_d100.pdf}
   \caption{Start-up delay. Test networks were 5Mbps with 100ms with variable loss rates.  
            The start-up delay is slightly lower for the TCP Hollywood-based client.}
   \label{fig:startup_loss}
@@ -113,7 +113,7 @@ drop observed per minute for TCP Hollywood than for standard TCP.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/rate_p2delay_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/bitrate_sn_loss_p2.pdf}
   \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\%loss with variable 
            delay. The error bars represent standard deviation. For higher delay values, 
            standard TCP shows lower standard deviation because it remains mostly at the 
@@ -123,7 +123,7 @@ drop observed per minute for TCP Hollywood than for standard TCP.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/ratechange_p2delay_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/ratedrops_sn_loss_p2.pdf}
   \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\%loss with variable 
            delay. The graph shows the percentage of chunks that were downloaded at a lower 
            rate than the previous one. The standard TCP adaptation algorithm is more stable 
@@ -143,7 +143,7 @@ at the lowest bit-rate.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/rate_loss_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/bitrate_sn_delay_d100.pdf}
   \caption{Test networks were 5Mbps with 100ms with variable loss rates. TCP Hollywood 
            significantly outperforms standard TCP at loss rate of 0.2\% with a higher 
            average rate and lower standard deviation. Error bars represent standard deviation.}
@@ -152,7 +152,7 @@ at the lowest bit-rate.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/ratechange_loss_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/ratedrops_sn_delay_d100.pdf}
   \caption{Test networks were 5Mbps with 100ms with variable loss rates. Hollywood is more 
            stable for 0.2\% and no loss cases, however, at higher loss levels, standard TCP 
            becomes more stable.}
@@ -178,7 +178,7 @@ the duration of the chunk, which in our case is 1 second.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/qoe_boxplot_p2delay_16.png}
+  \includegraphics[width=\columnwidth]{figures/results/qoe_sn_loss_p2.png}
   \caption{Impact of delay on quality of experience. Test networks were 5Mbps with 0.2\%loss 
            with variable delay.}
   \label{fig:qoe_delay2}
@@ -186,7 +186,7 @@ the duration of the chunk, which in our case is 1 second.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/qoe_boxplot_loss_16.png}
+  \includegraphics[width=\columnwidth]{figures/results/qoe_sn_delay_d100.png}
   \caption{Impact of packet loss on quality of experience. Test networks were 5Mbps with 100ms 
            with variable loss rates.  The TCP Hollywood-based client maintains a higher PSNR 
            and SSIM than standard TCP.}
@@ -223,7 +223,7 @@ Hollywood.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/stallduration_profiles_16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/stall_vn_all.pdf}
   \caption{Stall events are reduced for TCP Hollywood for all except profile k, where 
            latencies are under 20 ms and bandwidth levels between 9Mbps and 1Mbps. }
   \label{fig:stall_profiles}
@@ -231,7 +231,7 @@ Hollywood.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/qoe_violinplot_profiles16.png}
+  \includegraphics[width=\columnwidth]{figures/results/qoe_vn_all.png}
   \caption{Quality of experience profiles. PSNR and SSIM values of various network profiles 
            revealed similar results for both standard TCP and TCP Hollywood-based clients. The 
            shape of the violin graph reveals more information about the frequency of values, 
@@ -261,14 +261,14 @@ limit the number of discarded messages in favour of stalls in the presence of hi
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/ratechange_profiles16.pdf}
+  \includegraphics[width=\columnwidth]{figures/results/ratedrops_vn_all.pdf}
   \caption{Slight improvements in startup delay for all profiles is seen for TCP Hollywood. }
   \label{fig:ratechange_profiles}
 \end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/dash/adaptation_profiles16.pdf}
+  \includegraphics[width=\columnwidth]{figures/timeline_vn_example.pdf}
   \caption{TCP Hollywood allows the adaptation algorithm to adapt more quickly to higher bit-rates and also to sustain them for longer periods in the presence of network degradation. }
   \label{fig:adaptation_profile}
 \end{figure}

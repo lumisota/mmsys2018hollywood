@@ -45,11 +45,11 @@ def hollywood():
     runName = sys.argv[1];
     print runName;
 
-    if sys.argv[1].split('-')[3] == 'tcph':
+    if sys.argv[1].split('-')[1] == 'tcph':
         hollywood=' --hollywood ';
-    if sys.argv[1].split('-')[4] == 'oo':
+    if sys.argv[1].split('-')[3] == 'oo':
         oo=' --oo ';
-    bufferlen = sys.argv[1].split('-')[1]; 
+    bufferlen = sys.argv[1].split('-')[4]; 
 
     # Careful, the code for panda and abma is not updated in the client. Results will be incorrect.  
     if sys.argv[1].split('-')[5] == 'bola':
@@ -58,16 +58,15 @@ def hollywood():
         algo=' --algo panda ';
     elif sys.argv[1].split('-')[5] == 'abma':
         algo=' --algo abma ';
-    rxratio = sys.argv[1].split('-')[6];
+    rxratio = sys.argv[1].split('-')[2];
 
-    npname = '/vagrant/scripts/'+ sys.argv[1].split('-')[2]
+    npname = '/vagrant/profiles/'+ sys.argv[1].split('-')[6]
     np = open(npname, 'r')
 
     try:
         reader = list(csv.DictReader(np, fieldnames=['bw','delay','loss'], delimiter=' '))
-        appServer.cmd('cd ~/hollywood-api/')
         appServer.cmd('tcpdump -S port 5678 > /vagrant/data/' + runName + '.aserver-tcpdump &')
-        appServer.cmd('~/hollywood-api/httptl --port 5678 ' + hollywood +' > /vagrant/data/' + runName + '.aserver-out &')
+        appServer.cmd('./httptl --port 5678 ' + hollywood +' > /vagrant/data/' + runName + '.aserver-out &')
         sleep(0.5)
 
         #Apply initial network conditions. 
@@ -77,7 +76,7 @@ def hollywood():
         appServer.cmdPrint('tc qdisc add dev Server-eth0 parent 1:0 handle 10: netem loss ' + row['loss'] + '% delay ' + row['delay'] +'ms');        
 
         #initialize client code
-        appClient.cmdPrint('~/hollywood-api/httpc  --mpd ' + appServer.IP() +'/BBB_8bitrates_hd/bunny_1080_simple_ts.mpd ' + oo + hollywood + algo  +' --minrxratio ' + rxratio + ' --port 5678 --bufferlen ' + bufferlen + ' --out /vagrant/data/received.ts > /vagrant/data/' + runName + '.aclient-out & echo $! > receiver-pid')
+        appClient.cmdPrint('./httpc  --mpd ' + appServer.IP() +'/BBB_8bitrates_hd/bunny_1080_simple_ts.mpd ' + oo + hollywood + algo  +' --minrxratio ' + rxratio + ' --port 5678 --bufferlen ' + bufferlen + ' --out /vagrant/data/received.ts > /vagrant/data/' + runName + '.aclient-out & echo $! > receiver-pid')
 #        appClient.cmd('tcpdump -S port 5678 > /vagrant/data/' + runName + '.aclient-tcpdump &')
 
         #terminate test after 15 minutes

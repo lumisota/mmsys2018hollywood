@@ -3,6 +3,10 @@ stage3/BBB_8bitrates_hd.tar.gz
 stage3/BBB_8bitrates_hd
 stage3/big_buck_bunny_1080p.y4m.xz
 stage3/big_buck_bunny_1080p.y4m
+stage3/Vagrantfile*
+stage3/data
+stage4/data
+figures/results
 *.box
 .vagrant
 

@@ -3,11 +3,11 @@ import math
 
 with open(sys.argv[1]) as f:
     split_line = sys.argv[1].split("-"); 
-    prot = split_line[3];
-    net = split_line[2];
-    prebuf = split_line[1];
+    prot = split_line[1];
+    net = split_line[6];
+    prebuf = split_line[4];
     algo = split_line[5];
-    rxbufratio = split_line[6];
+    rxbufratio = split_line[2];
     upswitch = 0; 
     downswitch = 0; 
     rate = -1; 
