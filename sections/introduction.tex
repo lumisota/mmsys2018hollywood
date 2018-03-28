@@ -1,0 +1,59 @@
+\section{Introduction}
+
+% High-level: Internet video is significant, HAS protocols are a large part of that, but
+% TCP isn't optimal
+
+Video has grown to be the dominant class of traffic on the Internet in recent
+years, and it is expected to grow further. This growth has been driven by a rising number
+of cord-cutters: users who have switched to consuming video solely over the Internet. HTTP
+Adaptive Streaming (HAS) protocols, including proprietary protocols such as Apple's HTTP Live
+Streaming (HLS) and the MPEG-DASH standard, underpin much of this traffic.  HTTP uses TCP
+at the transport-layer, however, which is suboptimal for applications that wish to trade-off
+reliability and order for timeliness, including Internet video applications.
+
+% Narrow down: what's our problem with standard MPEG-DASH over HTTP+TCP?
+
+HAS protocols operate on a pull-based technique, driven by the client application. An HTTP
+server provides video in discrete chunks of equal duration. Each chunk is provided in several 
+different encodings, each at a different bit-rate. The client requests each chunk in turn, 
+determining the
+appropriate representation to request based on its rate adaptation algorithm. The client
+then plays out these chunks in order, using a buffer to attempt to reduce stalling
+behaviour when a chunk doesn't finish downloading in time to play. However, the application 
+is bound by the reliable delivery
+semantics of TCP: the application \emph{must} wait for undelivered chunks. Stalling for
+undelivered chunks affects quality-of-experience, not only with the stall itself, but with
+the signals that the delay provides to the rate adaptation algorithms. Transient network
+issues are amplified.
+
+% Contributions: what are we going to do/show?
+
+In this paper, we develop an MPEG-DASH system that uses TCP Hollywood
+\cite{mcquistin2016tcp,mcquistin2016tcp2}, a variant of TCP
+that provides an unordered, multi-streaming delivery model. The changes made in
+TCP Hollywood are intended to reduce the impact of
+losses on quality-of-experience in high-delay networks. In high-delay and high-loss networks, 
+adopting it for HAS results in total stall duration that is seven times lower than that of 
+standard TCP.
+Further, we show small improvements in start-up delay and average media bit-rate.
+
+% What about other methods? Multiple HTTP/1.1 connections? HTTP/2?
+
+Similar results could be achieved by using multiple simultaneous transport-layer
+connections. However, these connections maintain separate flow and congestion control
+states, resulting in degraded performance. Multi-streaming in HTTP/2 allows a single
+transport-layer connection to be used by multiple ordered streams. Sending each chunk
+within its own stream would remove application-layer head-of-line blocking, but not the
+head-of-line blocking introduced by TCP. Our approach allows for a single transport-layer
+connection to be used, with the benefits that come with this, while eliminating
+head-of-line blocking.
+
+% Paper structure
+
+The remainder of this paper is structured as follows. Section \ref{sec:hlywd} briefly
+introduces TCP Hollywood, and how its delivery semantics are useful for our application.
+Section \ref{sec:transport} describes the changes required to our MPEG-DASH client and
+server to work across TCP Hollywood. The testbed environment is described in Section
+\ref{sec:methodology}, and the evaluation results are discussed in Section \ref{sec:testing}.
+Finally, Section \ref{sec:related} discusses related work, and how our contribution fits
+with this, while Section \ref{sec:conclusion} concludes.

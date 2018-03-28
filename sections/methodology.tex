@@ -1,0 +1,105 @@
+\section{Evaluation Methodology}
+\label{sec:methodology}
+
+We evaluate MPEG-DASH performance using both standard TCP and TCP Hollywood, to understand 
+how the changes to the transport protocol affect quality of experience for streaming video.
+
+Our evaluation setup consists of a virtual environment that uses
+Mininet\footnote{\url{https://mininet.org}} to create a virtual network with a modified
+Linux kernel including the TCP Hollywood patches. We used our own MPEG-DASH server and client
+implementation. The TCP Hollywood API was disabled when testing with standard TCP, and a
+persistent HTTP/1.1 connection was used in both cases. The virtual network used included a single
+client and server connected through a switch. Path characteristics were emulated at the
+server interface using 
+netem\footnote{\url{https://wiki.linuxfoundation.org/networking/netem}} Token Bucket
+Filter traffic control, with a fixed 5Mbps line rate, a reasonable value for our test
+videos, where the highest quality is 5600kbps. The test cases are divided into two
+categories: (i) a loss rate of 0.2\% (random loss) with network latencies (RTT) between 50 to
+400ms; and (ii) loss rates between 0 and 1\% with network latency of 100ms. Additional testing
+was carried out with varying network conditions to evaluate adaptability.
+
+\begin{table}[!t]
+    \begin{tabular}{ccccc}
+        \toprule
+        \thead{Index} & \thead{Encoding bit-rate\\(kbps)} & \thead{Chunk bit-rate\\(kbps)} & \thead{PSNR} & \thead{SSIM} \\
+        \midrule 
+            1 & 1200 & 1301 & 37.220176 & 0.955177 \\
+            2 & 1800 & 1941 & 39.142917 & 0.967720 \\
+            3 & 2400 & 2584 & 40.478799 & 0.974580 \\
+            4 & 3000 & 3228 & 41.515695 & 0.978962 \\
+            5 & 3500 & 3766 & 42.226845 & 0.981527 \\
+            6 & 4000 & 4304 & 42.845958 & 0.983509 \\
+            7 & 5000 & 5328 & 43.868625 & 0.986314 \\
+            8 & 5600 & 6030 & 44.387282 & 0.987527 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Video representations; all representations have a resolution of
+             1920x1080p. PSNR and SSIM of re-encodings calculated against original Y4M reference.}
+    \label{tab:testvideos}
+\end{table}
+
+We used Big Buck Bunny\footnote{\url{https://peach.blender.org}} with 8 quality levels as a video 
+test sequence. The encoding bit-rates ranged from 1200 to 5600kbps with a constant resolution of 
+1920x1080p. The constant resolution eliminates the need for re-scaling in objective Quality of 
+Experience (QoE)
+computations, which require the videos to be of the same resolution. MPEG-TS
+are used to allow enable loss recovery. The use of MPEG-TS adds about a
+10\% metadata overhead to the streams in our case (the use of MPEG-TS is not
+essential to our approach, and any encoding or container format that is robust to packet loss
+could be used). The encoding details for the different quality levels of
+the test sequence are given in Table \ref{tab:testvideos}.
+As TCP Hollywood is designed for low-latency applications, we use a 16 second buffer, with
+a 1 second chunk duration.
+
+To compare the performance of MPEG-DASH over standard TCP and TCP Hollywood, we use a number of 
+Quality of Service (QoS) and QoE metrics: 
+\begin{description}
+    \item[Start-up delay] \hfill \\
+        The amount of time from the start of the test until 2 seconds of video has been downloaded and demuxed.
+    \item[Stall duration] \hfill \\
+        The total amount of time the video stalls due to a completely empty buffer. The
+        client would wait for one additional chunk to be downloaded before resuming play-out
+        when a stall occurs.
+    \item[Adaptability and stability] \hfill \\
+        These are measured using two metrics: (i) the average bit-rate of the downloaded
+        chunks, and (ii) the percentage of chunks with a downward bit-rate switch during
+        play-out.
+    \item[Objective QoE] \hfill \\
+        To measure the level of distortion produced due to a discarded message, we use the 
+        objective QoE metrics Peak Signal to Noise Ratio (PSNR) and Structural Similarity
+        (SSIM). Both metrics are full-reference. We use the original Y4M sequence as
+        reference and FFmpeg\footnote{\url{https://ffmpeg.org/ffmpeg-filters.html}} for the
+        computation. Since PSNR and SSIM values will be lower for lower quality chunks, the
+        metrics also provide a measure of quality even in the absence of discarded messages.
+\end{description}
+
+
+
+The algorithm is as follows 
+
+\begin{algorithm}
+\caption{BOLA with TCP Hollywood}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{DownloadStream}{}
+\State $\textit{n} \gets \textit{index of current chunk}$
+\State $N \gets \textit{Total number of chunks}$
+\State $B \gets \textit{Maximum Buffer Length}$
+\State $b_{now} \gets \textit{Current Buffer Length}$
+\State $b_{p} \gets \textit{PlaceHolder Buffer}$
+\While {$\text{n} < \text{N}$}
+\If {$b_{now} > B$}
+\State $\Delta t \gets B - b_{now}$
+\State $wait (\Delta t)$
+\EndIf
+\State ${b_{p} \gets b_{p} + \Delta t}$
+\State ${q \gets GetBolaQualityEstimate(b_p, b_{now})}$
+\While {$bytes_rx < Rx_T x size(n_q)$}
+\EndWhile
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+=======
+These metrics were chosen since they are widely used and have been shown to
+be representative of different aspects of the user experience for MPEG-DASH
+video.

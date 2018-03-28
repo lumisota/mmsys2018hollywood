@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:related}
+
+HAS is the de-facto standard for on-demand streaming in the current Internet.
+MPEG-DASH, the international standard, is similar to other flavours of HAS, all of which
+use a client pull-based technique for video streaming using HTTP. MPEG-DASH is a high
+latency technique relying heavily on prebuffering of video. However, a previous study on
+low-latency live video streaming was able to attain a latency as low as 240ms in local
+network with one frame fragments. The low-latency comes at the cost of higher packaging
+overhead; up to 13\% for HD video. There are several ongoing efforts for enhancing the
+performance of MPEG-DASH systems by assigning a greater role to the server. A server push
+based system with HTTP/2 is proposed by authors in \cite{wei2014low}, which lowers the
+latency for live DASH streams in comparison to the conventional HTTP request based
+approach. The researchers found that using 1 second segments greatly improved the live
+latency with their scheme, while a push based scheme prevented the request explosion
+problem associated with shorter segment durations. A server and network-assisted version
+of DASH, known as SAND \cite{thomas2015enhancing}, is also being developed and will be
+made part of the MPEG-DASH standard. SAND will enhance MPEG-DASH with asynchronous
+network-to-network and network-to-client quality related message exchange that does not
+interfere with regular media streaming. A Software Defined Network (SDN) assisted approach
+has been shown to improve user QoE by providing the client with network performance  and
+cache content information to assist the cache and bit-rate selection while using the SDN
+network to optimise the caches \cite{bhat2017network}.
+
+Our approach attempts to solve the application-layer issues that result from the latency
+that standard TCP introduces at the transport-layer. Other transport-layer solutions
+include QUIC \cite{draft-ietf-quic-transport-latest}, a UDP-based protocol with support
+for multi-streaming. While this eliminates the head-of-line blocking introduced by TCP,
+evaluations \cite{bhat:2017:not-so-quic} have shown that MPEG-DASH QoE is degraded when
+QUIC is used. This shows that application-layer changes are necessary to better support
+the semantics of the underlying transport-layer protocol. The application-layer
+modifications we propose are likely to be applicable to QUIC. Other application-layer
+approaches include the use of HTTP/2. While this provides support for multi-streaming, when used with
+standard TCP it still suffers from head-of-line blocking. The use of multiple simultaneous
+TCP connections provides a delivery model that is analogous to a multi-streaming protocol.
+However, these connections do not share flow and congestion control state, which degrades
+their performance. Further, managing these connections introduces complexity at the
+application-layer.
+

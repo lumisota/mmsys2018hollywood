@@ -1,0 +1,10 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+In this work, we evaluated the effects of unordered delivery on MPEG-DASH clients, using TCP Hollywood. We
+observed that by eliminating head-of-line blocking on a chunk and message level, 
+an MPEG-DASH client using TCP
+Hollywood is able to significantly reduce stall events while also slightly reducing start-up
+delay and improving download quality. The observations and lessons learnt during the
+course of this study can also be applied to other transports that support non-reliable
+streams, such as SCTP and QUIC. 

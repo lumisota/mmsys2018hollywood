@@ -1,0 +1,12 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "hollywood-TCPH_KERNEL_REV-TCPH_API_REV-libs"
+  config.vm.box_url = "stage2/hollywood-TCPH_KERNEL_REV-TCPH_API_REV-libs.box"
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.customize ["modifyvm", :id, "--cableconnected1", "on"]
+  end
+  config.vm.boot_timeout = 600
+end
