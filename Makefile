@@ -394,11 +394,11 @@ stage3-shutdown:
 	 done
 
 stage3-clean: stage3-shutdown
-	#$(call rm,$(STAGE3_OUTPUT))
+	$(call rm,$(STAGE3_OUTPUT))
 	rm -fr $(ALL_RUNS:%=stage3/%)
 	rm -fr $(STAGE3_OTHER_DIR)
 	rm -f  stage3/Vagrantfile-$(TCPH_KERNEL_REV)-$(TCPH_API_REV)
-	#-rmdir stage3/data
+	-rmdir stage3/data
 
 stage4-clean:
 	$(call rm,$(STAGE4_OUTPUT))
