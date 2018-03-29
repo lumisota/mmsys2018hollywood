@@ -3,16 +3,16 @@ import math
 
 with open(sys.argv[1]) as f:
     split_line = sys.argv[1].split("-"); 
-    prot = split_line[3];
-    net = split_line[2];
+    prot = split_line[1];
+    net = split_line[6];
     netfile = "stage3/profiles/" + net;
     with open(netfile) as nf:
         netconditions = nf.readlines()
     netiter = iter(netconditions);
     curr_net = next(netiter);
-    prebuf = split_line[1];
+    prebuf = split_line[4];
     algo = split_line[5];
-    rxbufratio = split_line[6];
+    rxbufratio = split_line[2];
     basetime = 0;
     
     if prebuf == "mp2s": 
