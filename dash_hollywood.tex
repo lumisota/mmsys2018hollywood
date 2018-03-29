@@ -141,6 +141,166 @@ comparison to standard TCP, with minimal changes to current adaptation algorithm
 \input{sections/related}
 \input{sections/conclusion}
 
+\appendix
+\section{Reproducibility}
+
+To aid with reproducibility, we provide all of the source code used in generating the
+results described in this paper, alongside a Makefile that describes and performs the
+process of performing the experiments, processing and graphing the results, and produces
+the paper.
+
+Our evaluations require a modified Linux kernel, and each run of the evaluation simulates
+different network parameters. To manage this complexity, we have split the paper's build
+process into a series of stages. In this section, we describe the inputs and outputs of
+each stage. We start by describing the required dependencies.
+
+\subsection*{Dependencies}
+
+The experiments are conducted within virtual machines, that use Linux with the TCP
+Hollywood kernel extensions and API installed. VirtualBox and Vagrant are used to manage
+these virtual machines. Each experiment run involves streaming Big Buck Bunny over a 
+simulated network; after this, FFmpeg is used to perform SSIM and PSNR analysis between
+the streamed version and a reference copy. Finally, Python and R are used to analyse and
+graph the results of the experiments. The versions that were used in our testing are shown
+in brackets; other versions may work.
+
+\begin{itemize}
+\item FFmpeg (3.4.2)
+\item Python (2.7)
+\item R (3.4.3) and packages (rkvo, ggplot2, data.table)
+\item Vagrant (2.0.2)
+\item VirtualBox (5.2.6r120293)
+\item xz (5.2.3)
+\end{itemize}
+
+The experiments use the TCP Hollywood kernel and API. These are located in the following
+repositories, and the specified versions used by the experiments:
+
+\begin{itemize}
+\item Kernel: \url{https://github.com/lumisota/tcp-hollywood-linux} \\ (version \texttt{0bb4a643})
+\item API layer: \url{https://github.com/lumisota/hollywood-api-video} (version \texttt{325c415f4492d0eeebc96af87bca94826aed1d75})
+\end{itemize}
+
+For readability, whenever this section refers to TCP Hollywood, it is these versions that
+have been used.
+
+\subsection*{Stage 1}
+
+TCP Hollywood is comprised of a set of modifications to the Linux kernel, and a user-space
+API layer. The first stage involves building a virtual machine image that has the TCP
+Hollywood kernel. Vagrant is used for this process; a clean Ubuntu 14.04 box is downloaded,
+upon which the specified version of the TCP Hollywood kernel is downloaded and installed.
+
+\subsubsection*{Inputs}
+\begin{itemize}
+\item TCP Hollywood kernel
+\item Ubuntu 14.04 (trusty) Vagrant base box
+\end{itemize}
+\subsubsection*{Outputs}
+\begin{itemize}
+\item TCP Hollywood kernel Vagrant box
+\end{itemize}
+
+\subsection*{Stage 2}
+
+The next stage is to install the TCP Hollywood API within the Vagrant box. This includes
+installing the modified HTTP client and server used in the experiments. In addition,
+mininet is installed, for use in simulating the network required by the experiments.
+
+\subsubsection*{Inputs}
+\begin{itemize}
+\item TCP Hollywood kernel Vagrant box
+\item TCP Hollywood API
+\end{itemize}
+\subsubsection*{Outputs}
+\begin{itemize}
+\item TCP Hollywood Vagrant box
+\end{itemize}
+
+\subsection*{Stage 3}
+
+The third stage involves conducting the experiments themselves, with a virtual machine
+(using the TCP Hollywood Vagrant box) instantiated for each run. The experiments involve
+streaming Big Buck Bunny over a simulated network. The network conditions are specified
+by network profiles (listed in the Makefile as \texttt{SN\_RUNS} and \texttt{VN\_RUNS});
+these are files that describe the network conditions (e.g., bandwidth, delay, loss rates).
+For each profile, the experiment is run both with TCP and TCP Hollywood, to compare the
+two. Finally, to produce the graphs in this paper, each run is repeated. We use 10
+repetitions by default; this can be controlled using the \texttt{RUN\_NUMBERS} variable
+in the Makefile. 
+
+Each run produces a set of files: logs from both the client and server, describing the
+application-layer activity (e.g., what is sent or received); a tcpdump taken at the
+server; and QoE logs (SSIM and PSNR analysis) that result from comparing the streamed
+video to the reference copy.
+
+\subsubsection*{Inputs}
+\begin{itemize}
+\item TCP Hollywood Vagrant box
+\item Big Buck Bunny (as MPEG-DASH chunks)
+\item Big Buck Bunny reference (1080p)
+\item Network profiles
+\end{itemize}
+\subsubsection*{Outputs}
+
+Each experiment run produces:
+\begin{itemize}
+\item Client logfile
+\item Server logfile
+\item Server tcpdump
+\item SSIM logfile
+\item PSNR logfile
+\end{itemize}
+
+\subsection*{Stage 4}
+The previous stage produces output files for each experiment, giving application-layer
+activity, and QoE data. In this stage, these output files are aggregated processed,
+allowing for analysis and graphing in the next stage.
+
+Broadly, the experiments fall into two groups: those with static network conditions, that
+do not change throughout the stream, and those with variable network conditions, where
+parameters, such as bandwidth and delay, are changed every 30 seconds. The results of
+experiments within each group, and for each network profile, are aggregated together.
+
+\subsubsection*{Inputs}
+\begin{itemize}
+\item Stage 3 output files
+\item Stage 4 Python and R scripts
+\end{itemize}
+\subsubsection*{Outputs}
+
+Each group (static or variable) produces (aggregated by network profile):
+\begin{itemize}
+\item Aggregated PSNR data
+\item Aggregated SSIM data
+\item Aggregated QoS data (e.g., rebuffering events)
+\item Aggregated bitrate data
+\end{itemize}
+
+\subsection*{Stage 5}
+In this stage, the processed results files generated by the previous stage are graphed.
+\begin{itemize}
+\item Stage 4 output files
+\item Stage 5 R scripts
+\end{itemize}
+\subsubsection*{Outputs}
+
+\begin{itemize}
+\item Figures 3 to 15 inclusive
+\end{itemize}
+
+\subsection*{Stage 6}
+With the results of the experiments graphed, the final stage is to build the paper.
+
+\begin{itemize}
+\item Paper TeX and BibTeX files
+\item Figures (static and those generated in stage 5)
+\end{itemize}
+\subsubsection*{Outputs}
+\begin{itemize}
+\item Paper
+\end{itemize}
+
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{dash_hollywood}
 
