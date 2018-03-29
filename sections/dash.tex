@@ -123,6 +123,50 @@ waiting before downloading the next chunk. With TCP Hollywood, messages may be d
 due to late arrival. If the buffer contains more than one chunk, we reduce the length of
 effective buffer level by one chunk duration.
 
+
+\begin{algorithm}
+\begin{algorithmic}[1]
+\Procedure{DownloadStream}{}
+\State $\textit{n} \gets \textit{index of current chunk}$
+\State $N \gets \textit{Total number of chunks}$
+\State $q \gets \textit{Quality of the chunk}$
+\State ${InitializeMetrics()}$
+\While {$\text{n} < \text{N}$}
+\State ${q \gets RunAlgorithm()}$
+\State ${DownloadChunk(q, n)}$
+\State ${UpdateMetricsUsingLastDownload()}$
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\caption{DASH Client Operation with TCP}\label{euclid}
+\end{algorithm}
+ 
+
+\begin{algorithm}
+\caption{DASH Client Operation with QUIC}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{DownloadStream}{}
+\State $\textit{n} \gets \textit{index of current chunk}$
+\State $N \gets \textit{Total number of chunks}$
+\State $q \gets \textit{Quality of the chunk}$
+\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
+\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
+\State $Rx_T \gets Minimum Receive Threshold$
+\State ${InitializeMetrics()}$
+\While {$\text{n} < \text{N}$}
+\State ${q \gets RunAlgorithm()}$
+\State $InitiateChunkDownload(q, n)$
+\While {$B_n^q < Rx_T * S_n^q$}
+\State $Wait()$
+\EndWhile
+\State ${UpdateMetricsUsingLastDownload()}$
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+
 %
 %For the latter, we use the parameter rxratio (Receive ratio); the receiver will stop
 %actively receiving a chunk if it has already received rxratio times the total bytes in
