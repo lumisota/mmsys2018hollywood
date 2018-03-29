@@ -419,5 +419,5 @@ stage6-clean:
 	$(call rm,$(TEX_BASE).fonts)
 	$(call rm,$(TEX_GENERATED))
 
-clean: stage1-clean stage2-clean stage3-clean stage456-clean stage7-clean
+clean: stage1-clean stage2-clean stage3-clean stage4-clean stage5-clean stage6-clean
 
