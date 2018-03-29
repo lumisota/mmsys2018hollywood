@@ -196,7 +196,7 @@ stage3/big_buck_bunny_1080p.y4m.xz:
 stage3/big_buck_bunny_1080p.y4m: stage3/big_buck_bunny_1080p.y4m.xz
 	@echo "================================================================================"
 	@echo "== Extracting stage3/big_buck_bunny_1080p.y4m.xz"
-	@xz -d --verbose stage3/big_buck_bunny_1080p.y4m.xz
+	@xz -d -k -f --verbose stage3/big_buck_bunny_1080p.y4m.xz
 	@echo "^^ Extracted stage3/big_buck_bunny_1080p.y4m.xz"
 	@echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 
