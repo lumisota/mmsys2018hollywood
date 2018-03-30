@@ -113,7 +113,7 @@ stage1/hollywood-$(TCPH_KERNEL_REV).box: stage1/hollywood-$(TCPH_KERNEL_REV) sta
 	@echo "================================================================================"
 	@echo "== Building $@"
 	export VAGRANT_CWD=stage1 && vagrant up
-	export VAGRANT_CWD=stage1 && vagrant ssh -c "mkdir ~/tcp-hollywood-linux && cp -r /vagrant/hollywood-$(TCPH_KERNEL_REV)/. ~/tcp-hollywood-linux"
+	export VAGRANT_CWD=stage1 && vagrant ssh -c "mkdir -p ~/tcp-hollywood-linux && cp -r /vagrant/hollywood-$(TCPH_KERNEL_REV)/. ~/tcp-hollywood-linux"
 	export VAGRANT_CWD=stage1 && vagrant ssh -c "bash /vagrant/bin/tcph-install.sh $(TCPH_KERNEL_REV)"
 	rm -f $@ && export VAGRANT_CWD=stage1 && vagrant package --output $@
 	export VAGRANT_CWD=stage1 && vagrant halt
