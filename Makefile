@@ -102,11 +102,19 @@ all: $(STAGE1_OUTPUT) $(STAGE2_OUTPUT) $(STAGE3_OUTPUT) $(STAGE4_OUTPUT) $(GRAPH
 # Stage 1: TCP Hollywood Vagrant box creation
 # ================================================================================================
 
-stage1/hollywood-$(TCPH_KERNEL_REV).box: stage1/bin/tcph-install.sh stage1/bin/box-setup.sh stage1/Vagrantfile stage1/grub
+stage1/hollywood-$(TCPH_KERNEL_REV):
+	@echo "================================================================================"
+	@echo "== Cloning $(TCPH_KERNEL_REPO) (revision $(TCPH_KERNEL_REV)) into $@"
+	ssh-agent bash -c 'chmod 400 stage1/$(TCPH_KERNEL_KEY); ssh-add stage1/$(TCPH_KERNEL_KEY); git clone $(TCPH_KERNEL_REPO) $@; cd $@; git checkout $(TCPH_KERNEL_REV)'
+	@echo "^^ Finished cloning $(TCPH_KERNEL_REPO) (revision $(TCPH_KERNEL_REV)) into $@"
+	@echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+
+stage1/hollywood-$(TCPH_KERNEL_REV).box: stage1/hollywood-$(TCPH_KERNEL_REV) stage1/bin/tcph-install.sh stage1/bin/box-setup.sh stage1/Vagrantfile stage1/grub
 	@echo "================================================================================"
 	@echo "== Building $@"
 	export VAGRANT_CWD=stage1 && vagrant up
-	export VAGRANT_CWD=stage1 && vagrant ssh -c "bash /vagrant/bin/tcph-install.sh $(TCPH_KERNEL_REPO) $(TCPH_KERNEL_KEY) $(TCPH_KERNEL_REV)"
+	export VAGRANT_CWD=stage1 && vagrant ssh -c "cp -r /vagrant/hollywood-$(TCPH_KERNEL_REV) ~/tcp-hollywood-linux"
+	export VAGRANT_CWD=stage1 && vagrant ssh -c "bash /vagrant/bin/tcph-install.sh $(TCPH_KERNEL_REV)"
 	rm -f $@ && export VAGRANT_CWD=stage1 && vagrant package --output $@
 	export VAGRANT_CWD=stage1 && vagrant halt
 	export VAGRANT_CWD=stage1 && vagrant destroy -f
@@ -130,11 +138,19 @@ stage1-get:
     
 STAGE2_EXPORT = VAGRANT_CWD=stage2 TCPH_KERNEL_REV=$(TCPH_KERNEL_REV) TCPH_API_REPO=$(TCPH_API_REPO)
 
-stage2/hollywood-$(TCPH_KERNEL_REV)-$(TCPH_API_REV)-libs.box: stage1/hollywood-$(TCPH_KERNEL_REV).box stage2/bin/box-setup.sh stage2/Vagrantfile
+stage2/hollywood-$(TCPH_API_REV)-libs:
+	@echo "================================================================================"
+	@echo "== Cloning $(TCPH_API_REPO) (revision $(TCPH_API_REV)) into $@"
+	ssh-agent bash -c 'chmod 400 stage2/$(TCPH_API_KEY); ssh-add stage2/$(TCPH_API_KEY); git clone $(TCPH_API_REPO) $@; cd $@; git checkout $(TCPH_API_REV)'
+	@echo "^^ Finished cloning $(TCPH_API_REPO) (revision $(TCPH_API_REV)) into $@"
+	@echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+
+stage2/hollywood-$(TCPH_KERNEL_REV)-$(TCPH_API_REV)-libs.box: stage2/hollywood-$(TCPH_API_REV)-libs stage1/hollywood-$(TCPH_KERNEL_REV).box stage2/bin/box-setup.sh stage2/Vagrantfile
 	@echo "================================================================================"
 	@echo "== Building $@"
 	export $(STAGE2_EXPORT) && vagrant up
-	export $(STAGE2_EXPORT) && vagrant ssh -c "bash /vagrant/bin/box-setup.sh $(TCPH_API_REPO) $(TCPH_API_KEY) $(TCPH_API_REV)"
+	export $(STAGE2_EXPORT) && vagrant ssh -c "cp -r /vagrant/hollywood-$(TCPH_API_REV)-libs ~/hollywood-api"
+	export $(STAGE2_EXPORT) && vagrant ssh -c "bash /vagrant/bin/box-setup.sh"
 	rm -f $@ && export $(STAGE2_EXPORT) && vagrant package --output $@
 	export $(STAGE2_EXPORT) && vagrant halt
 	export $(STAGE2_EXPORT) && vagrant destroy -f
