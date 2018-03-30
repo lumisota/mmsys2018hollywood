@@ -11,6 +11,7 @@ echo "***   REV  = $REV"
 
 mkdir -p ~/tcp-hollywood-linux
 tar -xvzf /vagrant/hollywood-$REV.tar.gz -C ~/tcp-hollywood-linux
+cd ~/tcp-hollywood-linux
 make deb-pkg LOCALVERSION=-hollywood KDEB_PKGVERSION=$(make kernelversion)-1
 sudo dpkg -i ../linux-headers-$(make kernelversion)-hollywood-g"$REV"$(git diff --quiet || echo '-dirty')_$(make kernelversion)-1_amd64.deb
 sudo dpkg -i ../linux-image-$(make kernelversion)-hollywood-g"$REV"$(git diff --quiet || echo '-dirty')_$(make kernelversion)-1_amd64.deb
