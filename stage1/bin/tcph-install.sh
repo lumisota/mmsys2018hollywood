@@ -5,19 +5,19 @@ set -e
 
 echo "*** Running tcph-install.sh"
 
-REV = $1
+REV=$1
 
 echo "***   REV  = $REV"
 
-cd ~/tcp-hollywood-linux
+tar -xvzf /vagrant/hollywood-$REV.tar.gz -C ~/tcp-hollywood-linux
 make deb-pkg LOCALVERSION=-hollywood KDEB_PKGVERSION=$(make kernelversion)-1
-sudo dpkg -i ../linux-headers-$(make kernelversion)-hollywood-g"$REV"_$(make kernelversion)-1_amd64.deb
-sudo dpkg -i ../linux-image-$(make kernelversion)-hollywood-g"$REV"_$(make kernelversion)-1_amd64.deb
+sudo dpkg -i ../linux-headers-$(make kernelversion)-hollywood-g"$REV"$(git diff --quiet || echo '-dirty')_$(make kernelversion)-1_amd64.deb
+sudo dpkg -i ../linux-image-$(make kernelversion)-hollywood-g"$REV"$(git diff --quiet || echo '-dirty')_$(make kernelversion)-1_amd64.deb
 sudo cp /vagrant/grub /etc/default/grub
 sudo update-grub
 export GRUB_CONFIG=`sudo find /boot -name "grub.cfg"`
-echo $(grep 'menuentry ' $GRUB_CONFIG | nl -v 0 | grep "hollywood-g${3}'" | cut -c 6)
-sudo grub-set-default $(grep 'menuentry ' $GRUB_CONFIG | nl -v 0 | grep "hollywood-g$REV'" | cut -c 6)]
+echo $(grep 'menuentry ' $GRUB_CONFIG | nl -v 0 | grep "hollywood-g${3}$(git diff --quiet || echo '-dirty')'" | cut -c 6)
+sudo grub-set-default $(grep 'menuentry ' $GRUB_CONFIG | nl -v 0 | grep "hollywood-g$REV$(git diff --quiet || echo '-dirty')'" | cut -c 6)]
 cd ..
 sudo rm -rf *
 
