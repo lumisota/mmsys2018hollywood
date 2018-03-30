@@ -191,10 +191,26 @@ Mininet\footnote{\url{http://mininet.org}} (version 2.2.1) is used to simulate t
 for each run. This is installed, and run, within the TCP Hollywood Vagrant box, and is
 not required to be installed on the host machine.
 
+\subsection*{Stage 0}
+
+Where the TCP Hollywood kernel source code has not been provided, the Makefile will pull
+a copy of it, using the repository and version specified. This takes place within an
+Ubuntu 14.04 virtual machine, which clones the repository, and compresses it into a 
+tarball; this tarball is used in the next stage.
+
+By performing this stage inside a Linux virtual machine, rather than on the host
+machine, we avoid problems caused by case-insensitive file systems. The Linux kernel
+assumes case-sensitivity, and there are a number of files in the same directory, whose
+name only differs in case. These files would be deleted if the repository was cloned on
+a host that had a case-insensitive file system.
+
+The data repository package contains the TCP Hollywood source code, as a tarball, in the
+stage0 directory.
+
 \subsection*{Stage 1}
 
 TCP Hollywood is comprised of a set of modifications to the Linux kernel, and a user-space
-API layer. The first stage involves building a virtual machine image that has the TCP
+API layer. Stage 1 involves building a virtual machine image that has the TCP
 Hollywood kernel. Vagrant is used for this process; a clean Ubuntu 14.04 box is downloaded,
 upon which the specified version of the TCP Hollywood kernel is downloaded and installed.
 
