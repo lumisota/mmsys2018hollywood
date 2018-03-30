@@ -5,7 +5,7 @@ set -e
 
 echo "*** Running tcph-install.sh"
 
-REV = $1
+REV=$1
 
 echo "***   REV  = $REV"
 
