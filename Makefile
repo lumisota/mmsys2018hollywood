@@ -185,6 +185,8 @@ stage2/hollywood-$(TCPH_KERNEL_REV)-$(TCPH_API_REV)-libs.box: stage2/hollywood-$
 
 STAGE3_EXPORT = VAGRANT_CWD=stage3
 
+BBB_REF_VID_SHA1 = $(openssl sha1 stage3/big_buck_bunny_1080p.y4m.xz)
+
 stage3/data:
 	mkdir $@
 
@@ -197,6 +199,11 @@ stage3/BBB_8bitrates_hd.tar.gz:
 
 stage3/BBB_8bitrates_hd: stage3/BBB_8bitrates_hd.tar.gz
 	@echo "================================================================================"
+	@echo "== Computing checksum for stage3/BBB_8bitrates_hd.tar.gz"
+	@if [ "`openssl sha1 stage3/BBB_8bitrates_hd.tar.gz | cut -d ' ' -f 2`" != "ddb5095814d941f95fb78d954555e1cbaa14d209" ]; then \
+        echo "*** stage3/stage3/BBB_8bitrates_hd.tar.gz checksum mismatch"; \
+        exit 1; \
+    fi
 	@echo "== Extracting stage3/BBB_8bitrates_hd.tar.gz"
 	@tar -xvzf stage3/BBB_8bitrates_hd.tar.gz -C stage3
 	@echo "^^ Extracted stage3/BBB_8bitrates_hd.tar.gz"
@@ -211,6 +218,11 @@ stage3/big_buck_bunny_1080p.y4m.xz:
 
 stage3/big_buck_bunny_1080p.y4m: stage3/big_buck_bunny_1080p.y4m.xz
 	@echo "================================================================================"
+	@echo "== Computing checksum for stage3/big_buck_bunny_1080p.y4m.xz"
+	@if [ "`openssl sha1 stage3/big_buck_bunny_1080p.y4m.xz | cut -d ' ' -f 2`" != "fdf4efc098ab43c815e7c4cc16b24510773b02b1" ]; then \
+        echo "*** stage3/big_buck_bunny_1080p.y4m.xz checksum mismatch"; \
+        exit 1; \
+    fi
 	@echo "== Extracting stage3/big_buck_bunny_1080p.y4m.xz"
 	@xz -d -k -f --verbose stage3/big_buck_bunny_1080p.y4m.xz
 	@echo "^^ Extracted stage3/big_buck_bunny_1080p.y4m.xz"
