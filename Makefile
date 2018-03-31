@@ -113,6 +113,7 @@ stage0/hollywood-$(TCPH_KERNEL_REV).tar.gz: stage0/Vagrantfile stage0/bin/fetch-
 	@echo "================================================================================"
 	@echo "== Building $@"
 	export VAGRANT_CWD=stage0 && vagrant up
+	export VAGRANT_CWD=stage0 && vagrant ssh -c "sudo apt-get update -y"
 	export VAGRANT_CWD=stage0 && vagrant ssh -c "sudo apt-get install git -y"
 	export VAGRANT_CWD=stage0 && vagrant ssh -c "bash /vagrant/bin/fetch-tcph.sh $(TCPH_KERNEL_REPO) $(TCPH_KERNEL_KEY) $(TCPH_KERNEL_REV)"
 	export VAGRANT_CWD=stage0 && vagrant halt
