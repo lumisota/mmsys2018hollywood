@@ -95,6 +95,7 @@ STAGE4_OUTPUT    = stage4/data/sn_qos_stats.csv \
                    stage4/data/vn_rate_changes.csv \
                    stage4/data/vn_frame_ssim.csv \
                    stage4/data/vn_frame_psnr.csv \
+                   stage4/data/vn_timeline_example.csv \
 
 # all target
 
