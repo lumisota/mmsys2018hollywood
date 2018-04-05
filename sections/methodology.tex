@@ -3,6 +3,8 @@
 
 We evaluate MPEG-DASH performance using both standard TCP and TCP Hollywood, to understand 
 how the changes to the transport protocol affect quality of experience for streaming video.
+Both standard TCP and TCP Hollywood use the CUBIC congestion control algorithm; both would
+be impacted by any change to the variant of TCP used.
 
 Our evaluation setup consists of a virtual environment that uses
 Mininet\footnote{\url{https://mininet.org}} to create a virtual network with a modified
