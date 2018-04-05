@@ -106,7 +106,7 @@ tmp$net = substr(tmp$net, 4, 5)
 pdf("figures/results/bitrate_vn_all.pdf", height = 3)
 print(ggplot(tmp, aes(as.factor(net), rate/1000 ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
       + geom_errorbar(aes(ymin=(rate-sdrate)/1000, ymax = (rate+sdrate)/1000), width=0.20, position = position_dodge(.35))
-      + theme_bw(base_size = 12) + xlab("Network Profile") + ylab ("Average Media Bitrate") 
+      + theme_bw(base_size = 12) + xlab("Network Profile") + ylab ("Average Media Bitrate (Mbps)") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
 

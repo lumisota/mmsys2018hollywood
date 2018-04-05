@@ -80,7 +80,7 @@ k$Prot = ifelse(k$Prot != "TCP", "Hollywood", "TCP")
 
 k = k[ k$TcpHrxratio == 0.9 | k$TcpHrxratio == 1, ]
 k = as.data.table(k)
-tmp = k[,list(stall = mean(TotalStallDur_ms,0.1), minstall = quantile(TotalStallDur_ms,0.1)/1000, maxstall = quantile(TotalStallDur_ms,0.9)/1000), by=c("Net","Prot", "Algo", "TcpHrxratio")]
+tmp = k[,list(stall = mean(TotalStallDur_ms,0.1), minstall = quantile(TotalStallDur_ms,0.2)/1000, maxstall = quantile(TotalStallDur_ms,0.8)/1000), by=c("Net","Prot", "Algo", "TcpHrxratio")]
 
 tmp = merge(tmp, n, by = "Net")
 sub = subset(tmp,Scheme == "Loss")
@@ -100,19 +100,19 @@ dev.off()
 # ../../dash_paper/section/testing.tex:  \includegraphics[width=\columnwidth]{dash/startupdelay_p2delay_16.pdf}
 # ../../dash_paper/section/testing.tex:  \includegraphics[width=\columnwidth]{dash/startupdelay_loss_16.pdf}
 ################################################################################################################
-tmp = k[,list(sd = reducedmedian(StartupDelay_ms)/1000, minsdelay = quantile(StartupDelay_ms,0.1)/1000, maxsdelay = quantile(StartupDelay_ms,0.9)/1000), by=c("Net","Prot", "TcpHrxratio", "BufferLen_ms")]
+tmp = k[,list(sd = reducedmedian(StartupDelay_ms)/1000, minsdelay = quantile(StartupDelay_ms,0.2)/1000, maxsdelay = quantile(StartupDelay_ms,0.8)/1000), by=c("Net","Prot", "TcpHrxratio", "BufferLen_ms")]
 
 tmp = merge(tmp, n, by = "Net")
 
 sub = subset(tmp,Scheme == "Delay_p2Loss")
 pdf("figures/results/startup_sn_loss_p2.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Delay), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + xlab("Network latency (ms)")+ylab("Startup Delay (ms)")+ theme_bw(base_size = 12) + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
+print(ggplot(sub, aes(as.factor(Delay), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + xlab("Network latency (ms)")+ylab("Startup Delay (s)")+ theme_bw(base_size = 12) + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
 
 
 sub = subset(tmp,Scheme == "Loss")
 pdf("figures/results/startup_sn_delay_d100.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Loss), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + theme_bw(base_size = 12) + xlab("Network Loss Rate")+ylab("Startup Delay (ms)") + theme(legend.position="top") +guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
+print(ggplot(sub, aes(as.factor(Loss), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + theme_bw(base_size = 12) + xlab("Network Loss Rate")+ylab("Startup Delay (s)") + theme(legend.position="top") +guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
 
 ################################################################################################################
@@ -140,7 +140,7 @@ sub = subset(tmp,Scheme == "Delay_p2Loss")
 pdf("figures/results/bitrate_sn_loss_p2.pdf", height = 3)
 print(ggplot(sub, aes(as.factor(Delay), rate/1000 ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
       + geom_errorbar(aes(ymin=(rate-sdrate)/1000, ymax = (rate+sdrate)/1000), width=0.2, position = position_dodge(.35))
-      + theme_bw(base_size = 12) + xlab("Network Latency (ms)") + ylab ("Average Media Bitrate") 
+      + theme_bw(base_size = 12) + xlab("Network Latency (ms)") + ylab ("Average Media Bitrate (Mbps)") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank()) + scale_fill_brewer())
 dev.off()
 
