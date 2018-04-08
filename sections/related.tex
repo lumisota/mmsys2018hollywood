@@ -1,39 +1,53 @@
 \section{Related Work}
 \label{sec:related}
 
-HAS is the de-facto standard for on-demand streaming in the current Internet.
-MPEG-DASH, the international standard, is similar to other flavours of HAS, all of which
-use a client pull-based technique for video streaming using HTTP. MPEG-DASH is a high
-latency technique relying heavily on prebuffering of video. However, a previous study on
-low-latency live video streaming was able to attain a latency as low as 240ms in local
-network with one frame fragments. The low-latency comes at the cost of higher packaging
-overhead; up to 13\% for HD video. There are several ongoing efforts for enhancing the
-performance of MPEG-DASH systems by assigning a greater role to the server. A server push
-based system with HTTP/2 is proposed by authors in \cite{wei2014low}, which lowers the
-latency for live DASH streams in comparison to the conventional HTTP request based
-approach. The researchers found that using 1 second segments greatly improved the live
-latency with their scheme, while a push based scheme prevented the request explosion
-problem associated with shorter segment durations. A server and network-assisted version
-of DASH, known as SAND \cite{thomas2015enhancing}, is also being developed and will be
-made part of the MPEG-DASH standard. SAND will enhance MPEG-DASH with asynchronous
-network-to-network and network-to-client quality related message exchange that does not
-interfere with regular media streaming. A Software Defined Network (SDN) assisted approach
-has been shown to improve user QoE by providing the client with network performance  and
-cache content information to assist the cache and bit-rate selection while using the SDN
-network to optimise the caches \cite{bhat2017network}.
+HTTP adaptive streaming has become the de-facto standard for on-demand video streaming.
+MPEG-DASH, an International Standard, is similar to other flavours of HAS, in that the
+architecture involves a client requesting discrete chunks of media over HTTP, at a rate
+determined by its adaptation algorithm. HAS protocols, by virtue of their use of chunked
+encodings and HTTP over TCP, introduce significant latency, and rely heavily upon
+buffering to maintain quality-of-experience. However, a previous study has shown that
+latency, in a local network, can be reduced to as low as 240ms. The cost of this was
+higher packaging overhead, with increases of up to 13\%.
 
-Our approach attempts to solve the application-layer issues that result from the latency
-that standard TCP introduces at the transport-layer. Other transport-layer solutions
-include QUIC \cite{draft-ietf-quic-transport-latest}, a UDP-based protocol with support
-for multi-streaming. While this eliminates the head-of-line blocking introduced by TCP,
-evaluations \cite{bhat:2017:not-so-quic} have shown that MPEG-DASH QoE is degraded when
-QUIC is used. This shows that application-layer changes are necessary to better support
-the semantics of the underlying transport-layer protocol. The application-layer
-modifications we propose are likely to be applicable to QUIC. Other application-layer
-approaches include the use of HTTP/2. While this provides support for multi-streaming, when used with
-standard TCP it still suffers from head-of-line blocking. The use of multiple simultaneous
+An obvious application-layer approach to reducing latency in MPEG-DASH is to reduce the
+size of chunks; however, doing this leads to a significant increase in the number of HTTP
+requests sent. Wei and Swaminathan \cite{wei2014} propose using HTTP/2's server push
+mechanism to reduce the number of requests, potentially only requiring a single HTTP
+request across the entire stream. Xiao et al. \cite{xiao2016dash2m} take a similar
+approach, but focus on mobile devices. While the use of HTTP/2 provides server push and
+multi-streaming (and so eliminates head-of-line blocking at the application-layer), using
+standard TCP means that the application will still be impacted by head-of-line blocking.
+In the event of loss, data will be delayed by more than one RTT \cite{mcquistin2016tcp2};
+this is problematic in low-latency applications. he use of multiple simultaneous
 TCP connections provides a delivery model that is analogous to a multi-streaming protocol.
 However, these connections do not share flow and congestion control state, which degrades
 their performance. Further, managing these connections introduces complexity at the
 application-layer.
 
+Our approach attempts to eliminate the latency associated with head-of-line blocking by
+using TCP Hollywood, whose message-oriented unordered delivery model is well suited to
+low-latency applications. Other transport-layer solutions include QUIC
+\cite{draft-ietf-quic-transport-latest}, a UDP-based protocol with support for stream
+multiplexing. Importantly, evaluations conducted over QUIC \cite{bhat:2017:not-so-quic}
+have shown that MPEG-DASH QoE is degraded. 
+
+Neither of these approaches -- application-layer changes (e.g., using HTTP/2) or 
+novel transport-layer protocols (e.g., TCP Hollywood or QUIC) -- alone is sufficient to
+improve application performance. Both are required: application-layer changes are
+necessary, but these must be supported by the semantics of the underlying transport
+protocol. The application-layer modifications we propose here are likely to be compatible
+with other multi-streaming transport-layer protocols, including QUIC.
+
+Complementary latency-reducing approaches include a server and network-assisted variant
+of MPEG-DASH, SAND \cite{thomas2015enhancing}, is also in development, and will form part
+of the MPEG-DASH standard. SAND enhances MPEG-DASH with asynchronous network-to-network
+and network-to-client quality-related message exchange. A Software Defined Networking
+(SDN) based approach has been shown to improve user QoE by providing the client with
+network performance and cache content information to assist the cache and bit-rate
+selection while using the SDN network to optimise the caches \cite{bhat2017network}.
+Additionally, Fr\"ommgen et al. \cite{frommgen2017programming} propose a programming model
+for multipath TCP scheduling; the delivery model of TCP Hollywood, combined with the type
+of traffic being carried, make this an interesting basis for future work. For example,
+exposing message deadlines to a multipath scheduler may increase the proportion of
+messages that meet their deadline.
