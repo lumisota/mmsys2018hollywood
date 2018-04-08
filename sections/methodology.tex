@@ -75,33 +75,6 @@ Quality of Service (QoS) and QoE metrics:
         metrics also provide a measure of quality even in the absence of discarded messages.
 \end{description}
 
-
-
-The algorithm is as follows 
-
-\begin{algorithm}
-\caption{BOLA with TCP Hollywood}\label{euclid}
-\begin{algorithmic}[1]
-\Procedure{DownloadStream}{}
-\State $\textit{n} \gets \textit{index of current chunk}$
-\State $N \gets \textit{Total number of chunks}$
-\State $B \gets \textit{Maximum Buffer Length}$
-\State $b_{now} \gets \textit{Current Buffer Length}$
-\State $b_{p} \gets \textit{PlaceHolder Buffer}$
-\While {$\text{n} < \text{N}$}
-\If {$b_{now} > B$}
-\State $\Delta t \gets B - b_{now}$
-\State $wait (\Delta t)$
-\EndIf
-\State ${b_{p} \gets b_{p} + \Delta t}$
-\State ${q \gets GetBolaQualityEstimate(b_p, b_{now})}$
-\While {$bytes_rx < Rx_T x size(n_q)$}
-\EndWhile
-\EndWhile
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-=======
 These metrics were chosen since they are widely used and have been shown to
 be representative of different aspects of the user experience for MPEG-DASH
 video.

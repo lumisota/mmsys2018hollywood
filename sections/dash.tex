@@ -54,9 +54,8 @@ empty.
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{figures/tcph-download.pdf}
-    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood}
+    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood. The measurement period for first chunk is shown in blue while that of the second chunk is shown in green. }
     \label{fig:hollywood_download}
-    % FIXME: what are the light blue and light green shaded rectangles in this figure? [csp]
 \end{figure}
 
 The requested chunks of video are transmitted on a single stream, using fixed size
@@ -165,6 +164,31 @@ effective buffer level by one chunk duration.
 \end{algorithmic}
 \end{algorithm}
 
+The algorithm is as follows 
+
+\begin{algorithm}
+\caption{BOLA with TCP Hollywood}\label{euclid}
+\begin{algorithmic}[1]
+\Procedure{DownloadStream}{}
+\State $\textit{n} \gets \textit{index of current chunk}$
+\State $N \gets \textit{Total number of chunks}$
+\State $B \gets \textit{Maximum Buffer Length}$
+\State $b_{now} \gets \textit{Current Buffer Length}$
+\State $b_{p} \gets \textit{PlaceHolder Buffer}$
+\While {$\text{n} < \text{N}$}
+\If {$b_{now} > B$}
+\State $\Delta t \gets B - b_{now}$
+\State $wait (\Delta t)$
+\EndIf
+\State ${b_{p} \gets b_{p} + \Delta t}$
+\State ${q \gets GetBolaQualityEstimate(b_p, b_{now})}$
+\While {$bytes_rx < Rx_T x size(n_q)$}
+\EndWhile
+\EndWhile
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+=======
 
 
 %
