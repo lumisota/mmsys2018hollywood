@@ -1,36 +1,39 @@
 \section{TCP Hollywood}
 \label{sec:hlywd}
 
-TCP Hollywood \cite{mcquistin2016tcp, mcquistin2016tcp2} is an unordered and time-lined transport protocol.
-While maintaining wire compatibility with standard TCP, TCP Hollywood removes two sources
-of transport-layer latency: in-order delivery and reliability. In-order delivery
-results in head-of-line blocking: data is not made available to the application until all 
-earlier data has been delivered. Providing
-reliability over a best-effort network requires retransmissions, adding latency while
-loss is detected and retransmissions are sent. TCP Hollywood uses message-oriented
-semantics, and eliminates head-of-line blocking by delivering these messages to the
-receiver in the order that they arrive. TCP Hollywood also relaxes standard TCP's
-reliability guarantee, providing \emph{partial} reliability instead. The TCP Hollywood
-API allows applications to specify a deadline for each message, after which it will no
-longer be sent -- this means that if a retransmission of a lost message is unlikely to
-arrive before its deadline, it will not be sent; an unexpired message will be sent
-instead (i.e., the retransmitted TCP segment's payload is different to the original transmission). 
-Making use of this functionality requires that the application be aware of
-the TCP Hollywood extensions and the content being sent, such that it can
-set a deadline for each message. 
+TCP Hollywood \cite{mcquistin2016tcp, mcquistin2016tcp2} is an unordered and time-lined
+transport protocol. While maintaining wire compatibility with standard TCP, TCP Hollywood
+removes two sources of transport-layer latency: in-order delivery and reliability.
+In-order delivery results in head-of-line blocking: data is not made available to the
+application until all earlier data has been delivered. Providing reliability over a
+best-effort network requires retransmissions, adding latency while loss is detected and
+retransmissions are sent. TCP Hollywood uses message-oriented semantics, and eliminates
+head-of-line blocking by delivering messages to the receiver in the order that they
+arrive. TCP Hollywood also relaxes standard TCP's reliability guarantee, providing
+\emph{partial} reliability instead. The TCP Hollywood API allows applications to specify a
+deadline for each message, after which it will no longer be sent -- this means that if a
+retransmission of a lost message is unlikely to arrive before its deadline, it will not be
+sent; an unexpired message will be sent instead (i.e., the retransmitted TCP segment's
+payload is different to the original transmission). Making use of this functionality
+requires that the application be aware of the TCP Hollywood extensions and the content
+being sent, such that it can set a deadline for each message.
 
 Under standard MPEG-DASH, when a frame is to be played out, but has not yet arrived, the
 application will stall waiting for the missing data to arrive. When using standard TCP,
 this is a sensible design choice: subsequent frames are not in the application buffer
 either. However, when TCP Hollywood is used, and head-of-line blocking is eliminated,
-later frames may be available to the application. This makes skipping frames a viable design
-choice -- rather than waiting for the missing frame, it is better to use error concealment
-techniques to minimise the impact of loss as much as possible and continue play-back. 
-Deeper analysis of TCP Hollywood \cite{mcquistin2016tcp, mcquistin2016tcp2}, which
-explores the impact of removing head-of-line blocking on application performance, has been
-carried out.
+later frames may be available to the application. This makes skipping frames a viable
+design choice -- rather than waiting for the missing frame, it is better to use error
+concealment techniques to minimise the impact of loss as much as possible and continue
+play-back. Deeper analysis of TCP Hollywood \cite{mcquistin2016tcp, mcquistin2016tcp2},
+which explores the impact of removing head-of-line blocking on application performance,
+has been carried out.
 
-The scope of this work is to evaluate the impact of HAS-over-TCP Hollywood on
-video quality-of-experience, while minimising change at the application-layer (i.e., maintaining
-alignment with the MPEG-DASH standard). For this reason, in the interest of keeping a
-stateless server, we only use the unordered delivery feature of TCP Hollywood. 
+The scope of this work is to evaluate the impact of HAS-over-TCP Hollywood on video
+quality-of-experience, while minimising change at the application-layer (i.e., maintaining
+alignment with the MPEG-DASH standard). One of the core tenets of the MPEG-DASH
+architecture is that the application logic is driven by the client: it determines when,
+and at which rate, chunks are requested. This means that the server can be a generic HTTP
+server -- much of MPEG-DASH's popularity is owed to this approach. Given that TCP
+Hollywood's deadline API requires state to be held at the server, we only consider the
+benefits of its unordered delivery feature in this paper. 
