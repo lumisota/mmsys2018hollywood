@@ -62,7 +62,7 @@ empty.
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{figures/tcph-download.pdf}
-    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood. The measurement period for first chunk is shown in blue while that of the second chunk is shown in green. }
+    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood. The shaded area represents the measurement period for each chunk. }
     \label{fig:hollywood_download}
 \end{figure}
 
@@ -77,7 +77,6 @@ previously. Both fields are used by the receiver to reorder the messages and det
 losses. We expanded the function of the play-out buffer to include de-jittering and
 reordering of the incoming messages.
 
-% FIXME: explain why MP4 is not suitable [csp] 
 The commonly used ISO Base Media File Format (MP4) is not suitable for TCP Hollywood due to its lack of tolerance for packet losses. Hence, we use MPEG Transport streams (TS), which are allowed as part of the MPEG-DASH standard and also used in HLS.
 
 \subsection{Rate Adaptation Algorithms}
@@ -127,14 +126,6 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 In the presence of packet loss and duplication, that is possible with TCP Hollywood, the calculation 
 mechanisms for measurements have to be modified. BOLA algorithm is written for standard TCP, where HoL blocking means that the client must wait for all data to arrive. In TCP Hollywood, HoL blocking is eliminated, allowing the client to continue if even some data hasn't arrived. Therefore, we introduce a new parameter, $Rx_{T}$, the Receive Threshold: when the ratio of the bytes received in a chunk reaches $Rx_{T}$, the client continues with its rate adaptation as if the entire chunk had arrived. Care is needed when selecting the value of RxT: if it is too low, the rate adaptation will be performed on a partial view of network conditions, which may result in selecting an unsuitable rate; picking RxT too high would diminish the impact of eliminating HoL blocking. After experimenting with a range of RxT values between 0.75 and 0.99, under stable network conditions, we chose 0.9. We found this value was sufficiently high to include the current chunk as part of the buffered duration (only 10\% of the chunk remains to be downloaded, with some data in-flight, and a limited number of messages that may delayed and subsequently discarded by TCP Hollywood if they miss their deadline), and gather measurements for the next chunk, while sufficiently low as to enable the benefits of TCP Hollywood. While our experiments only considered 1 second chunks, we expect this value to hold for other chunk durations. The modified operation for TCP Hollywood is shown as Algorithm \ref{algo:tcph_dash}. Note that any throughput estimations used by the BOLA algorithm, while not shown as part of the pseudocode, will also use only the partial download of the chunk. 
 
-% FIXME: probably outside the scope of the initial submission, but it would
-% be appropriate to describe the experiments and results that led to the
-% choice of 0.9 as a parameter [csp] - Done [sa]
-
-% FIXME: "uses an effective buffer level" to do what? [csp] - Explained [sa]
-
-
-
 \begin{algorithm}
 	\begin{algorithmic}[1]
    		\Procedure{DownloadStream}{}
@@ -166,4 +157,4 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 	\label{algo:tcph_dash}
 \end{algorithm}
 
-
+The $Rx_{T}$ parameter can be used with other adaptation algorithms as it impacts only the measurements and not the quality estimation. Preliminary testing for this study was carried out using both the buffer-based BOLA algorithm and the throughput-based PANDA algorithm \cite{li2014probe}. Generally, we found BOLA outperformed PANDA for standard TCP and TCP Hollywood, in terms of stall avoidance and bit rate switching, a finding confirmed by previous studies \cite{karagkioules2017comparative}. Note that the main advantages of TCP Hollywood (shown in Figure \ref{fig:hollywood_download}) are the removal of head-of-line (HoL) blocking, and the addition of chunk request pipelining and these remain regardless of the algorithm used. 
