@@ -6,6 +6,22 @@ unordered transport protocol requires several considerations. These
 changes happen in two broad areas: the HTTP request and response semantics, and the rate
 adaptation algorithms. We consider both of these in turn below.
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/terminology2.pdf}
+  \caption{Illustration of the terminology used in this paper and also the encapsulation of data for transport.}
+  \label{fig:terminology}
+\end{figure}
+
+Given that our approach spans multiple layers of the stack, we must use carefully defined
+terminology. The MPEG-DASH standard sends \emph{chunks}; these are groups of video
+\emph{frames} that have the same duration. In our approach, the server will send these
+using TCP Hollywood \emph{messages}. A chunk may be split across more than one message,
+but a message will never contain data from more than one chunk. Finally, messages are
+send in TCP \emph{segments}; a segment may contain data from more than one message, and
+may contain only some of the data for a message.
+Figure \ref{fig:terminology} illustrates this terminology.
+
 \subsection{HTTP Request/Response Semantics}
 
 TCP Hollywood operates on a message level and thus the decision to keep or discard is made
@@ -19,14 +35,6 @@ individual video frames would require the HTTP server to be content-aware, and a
 split video chunks into frame; this is beyond the scope of our work given our goal of
 maintaining alignment with the MPEG-DASH standard. Accordingly, we opt to send fixed-size 
 messages (of 1400 bytes), which balances the impact of segment loss with being content-agnostic. 
-The terminology and its use within the paper is further clarified in Figure \ref{fig:terminology}.
-
-\begin{figure}
-  \centering
-  \includegraphics[width=\columnwidth]{figures/terminology2.pdf}
-  \caption{Illustration of the terminology used in this paper and also the encapsulation of data for transport.}
-  \label{fig:terminology}
-\end{figure}
 
 TCP Hollywood supports multi-streaming over a single TCP connection, allowing for the
 separation of the control and data channels. We use separate streams for HTTP request and
