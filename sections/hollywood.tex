@@ -18,17 +18,6 @@ payload is different to the original transmission). Making use of this functiona
 requires that the application be aware of the TCP Hollywood extensions and the content
 being sent, such that it can set a deadline for each message.
 
-Under standard MPEG-DASH, when a frame is to be played out, but has not yet arrived, the
-application will stall waiting for the missing data to arrive. When using standard TCP,
-this is a sensible design choice: subsequent frames are not in the application buffer
-either. However, when TCP Hollywood is used, and head-of-line blocking is eliminated,
-later frames may be available to the application. This makes skipping frames a viable
-design choice -- rather than waiting for the missing frame, it is better to use error
-concealment techniques to minimise the impact of loss as much as possible and continue
-play-back. Deeper analysis of TCP Hollywood \cite{mcquistin2016tcp, mcquistin2016tcp2},
-which explores the impact of removing head-of-line blocking on application performance,
-has been carried out.
-
 The scope of this work is to evaluate the impact of HAS-over-TCP Hollywood on video
 quality-of-experience, while minimising change at the application-layer (i.e., maintaining
 alignment with the MPEG-DASH standard). One of the core tenets of the MPEG-DASH
@@ -37,3 +26,24 @@ and at which rate, chunks are requested. This means that the server can be a gen
 server -- much of MPEG-DASH's popularity is owed to this approach. Given that TCP
 Hollywood's deadline API requires state to be held at the server, we only consider the
 benefits of its unordered delivery feature in this paper. 
+
+The benefits of TCP Hollywood alone have been analysed
+\cite{mcquistin2016tcp, mcquistin2016tcp2}: eliminating head-of-line blocking significantly
+reduces the latency in lossy networks. However, the impact of these savings is muted,
+unless the application is structured such that it can make use of them: data sent in each
+TCP Hollywood message must be independently (of other messages) useful. Under standard
+MPEG-DASH, when a frame is to be played out, but has not yet arrived, the application
+will stall waiting for the missing data to arrive. When using standard TCP, this is a
+sensible design choice: subsequent frames are not available to the application. However,
+under TCP Hollywood, the frames that arrive while the missing frame is retransmitted
+may be available to be played out: this makes skipping frames a viable design choice.
+Rather than waiting for the missing frame, it is better to use error concealment
+techniques to minimise the impact of loss (as far as possible) and continue play-back.
+However, rate adaptation algorithms have not been designed to consider loss, and must be
+reevaluated when TCP Hollywood is used.
+
+In introducing TCP Hollywood, and therefore out-of-order delivery, at the transport-layer,
+we must consider two design choices at the application-layer: the data that should be
+sent in each message, such that the benefits of out-of-order delivery are maximised,
+and the operation of the rate adaptation algorithm when some data may be missing. This
+paper will investigate these design choices.
