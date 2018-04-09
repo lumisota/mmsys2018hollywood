@@ -24,17 +24,17 @@ Figure \ref{fig:terminology} illustrates this terminology.
 
 \subsection{HTTP Request/Response Semantics}
 
-TCP Hollywood operates on a message level and thus the decision to keep or discard is made
-for a message. The application must therefore decide what each message should contain. In
-the case of our HAS application, messages could contain either (i) an entire chunk of video; 
-(ii) a video frame from within the chunk; or (iii) a fixed-sized message from within the 
-chunk boundaries.  Sending an entire chunk as a TCP Hollywood
-message means that the loss of a single TCP segment carrying part of that message could result in
-the entire message being lost if it failed to be delivered before its deadline. Sending 
-individual video frames would require the HTTP server to be content-aware, and able to 
-split video chunks into frame; this is beyond the scope of our work given our goal of
-maintaining alignment with the MPEG-DASH standard. Accordingly, we opt to send fixed-size 
-messages (of 1400 bytes), which balances the impact of segment loss with being content-agnostic. 
+As discussed in the previous section, the transmission unit of TCP Hollywood is a message:
+complete messages are delivered to the application when they arrive. Care must be taken in
+deciding what should be sent in each message: if a message is too large, then its loss
+will have a greater impact on the application's quality-of-experience; too small, and the
+ratio of payload to header will be low. Sending an entire chunk per message means that,
+in the event a segment that makes up the message is lost, upwards of 1 second of video
+data is not delivered to the application. Sending a single video frame is the
+other extreme: we minimise the impact of loss on QoE, but reduce the efficiency of our
+application, by sending a TCP/IP header per video frame. As a result, we opt for a
+compromise: we send fixed-size (1400 byte) messages. This reduces the impact of loss 
+(though not minimally), while amortising the header across a larger payload.
 
 TCP Hollywood supports multi-streaming over a single TCP connection, allowing for the
 separation of the control and data channels. We use separate streams for HTTP request and
