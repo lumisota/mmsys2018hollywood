@@ -123,72 +123,56 @@ due to late arrival. If the buffer contains more than one chunk, we reduce the l
 effective buffer level by one chunk duration.
 
 
-\begin{algorithm}
-\begin{algorithmic}[1]
-\Procedure{DownloadStream}{}
-\State $\textit{n} \gets \textit{index of current chunk}$
-\State $N \gets \textit{Total number of chunks}$
-\State $q \gets \textit{Quality of the chunk}$
-\State ${InitializeMetrics()}$
-\While {$\text{n} < \text{N}$}
-\State ${q \gets RunAlgorithm()}$
-\State ${DownloadChunk(q, n)}$
-\State ${UpdateMetricsUsingLastDownload()}$
-\EndWhile
-\EndProcedure
-\end{algorithmic}
-\caption{DASH Client Operation with TCP}\label{euclid}
-\end{algorithm}
- 
-
-\begin{algorithm}
-\caption{DASH Client Operation with QUIC}\label{euclid}
-\begin{algorithmic}[1]
-\Procedure{DownloadStream}{}
-\State $\textit{n} \gets \textit{index of current chunk}$
-\State $N \gets \textit{Total number of chunks}$
-\State $q \gets \textit{Quality of the chunk}$
-\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
-\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
-\State $Rx_T \gets Minimum Receive Threshold$
-\State ${InitializeMetrics()}$
-\While {$\text{n} < \text{N}$}
-\State ${q \gets RunAlgorithm()}$
-\State $InitiateChunkDownload(q, n)$
-\While {$B_n^q < Rx_T * S_n^q$}
-\State $Wait()$
-\EndWhile
-\State ${UpdateMetricsUsingLastDownload()}$
-\EndWhile
-\EndProcedure
-\end{algorithmic}
+\begin{algorithm}[t!]
+	\begin{algorithmic}[1]
+   		\Procedure{DownloadStream}{}
+		\State $\textit{n} \gets \textit{index of current chunk}$
+		\State $N \gets \textit{Total number of chunks}$
+		\State $B \gets \textit{Maximum Buffer Length}$
+		\State $b_{now} \gets \textit{Current Buffer Length}$
+		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
+		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
+		\State $Rx_T \gets Minimum Receive Threshold$
+		\While {$\text{n} < \text{N}$}
+			\If {$b_{now} > B$}
+				\State $\Delta t \gets B - b_{now}$
+				\State $WaitForDuration (\Delta t)$
+			\EndIf
+			\State ${q \gets GetBolaQualityEstimate(b_{now})}$
+			\State ${DownloadChunk(q, n)}$
+		\EndWhile
+		\EndProcedure
+	\end{algorithmic}
+	\caption{BOLA rate adaptation under TCP}
+    	\label{algo:tcp_dash}
 \end{algorithm}
 
-The algorithm is as follows 
-
 \begin{algorithm}
-\caption{BOLA with TCP Hollywood}\label{euclid}
-\begin{algorithmic}[1]
-\Procedure{DownloadStream}{}
-\State $\textit{n} \gets \textit{index of current chunk}$
-\State $N \gets \textit{Total number of chunks}$
-\State $B \gets \textit{Maximum Buffer Length}$
-\State $b_{now} \gets \textit{Current Buffer Length}$
-\State $b_{p} \gets \textit{PlaceHolder Buffer}$
-\While {$\text{n} < \text{N}$}
-\If {$b_{now} > B$}
-\State $\Delta t \gets B - b_{now}$
-\State $wait (\Delta t)$
-\EndIf
-\State ${b_{p} \gets b_{p} + \Delta t}$
-\State ${q \gets GetBolaQualityEstimate(b_p, b_{now})}$
-\While {$bytes_rx < Rx_T x size(n_q)$}
-\EndWhile
-\EndWhile
-\EndProcedure
-\end{algorithmic}
+	\begin{algorithmic}[1]
+   		\Procedure{DownloadStream}{}
+		\State $\textit{n} \gets \textit{index of current chunk}$
+		\State $N \gets \textit{Total number of chunks}$
+		\State $B \gets \textit{Maximum Buffer Length}$
+		\State $b_{now} \gets \textit{Current Buffer Length}$
+		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
+		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
+		\State $Rx_T \gets Minimum Receive Threshold$
+		\While {$\text{n} < \text{N}$}
+			\If {$b_{now} > B$}
+				\State $\Delta t \gets B - b_{now}$
+				\State $WaitForDuration (\Delta t)$
+			\EndIf
+			\State ${q \gets GetBolaQualityEstimate(b_{now})}$
+			\State $InitiateChunkDownload(q, n)$
+			\State $WaitUntil (B_n^q < Rx_T * S_n^q)$
+		\EndWhile
+		\EndProcedure
+	\end{algorithmic}
+	\caption{BOLA rate adaptation under TCP Hollywood}
+	\label{algo:tcph_dash}
 \end{algorithm}
-=======
+
+
 
 
 %
