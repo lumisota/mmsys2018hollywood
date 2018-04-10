@@ -106,7 +106,6 @@ uses throughput estimates to further reduce over-estimation and stalling. Algori
 		\State $b_{now} \gets \textit{Current Buffer Length}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
-		\State $Rx_T \gets Minimum Receive Threshold$
 		\While {$\text{n} < \text{N}$}
 			\If {$b_{now} > B$}
 				\State $\Delta t \gets B - b_{now}$
@@ -122,7 +121,7 @@ uses throughput estimates to further reduce over-estimation and stalling. Algori
 \end{algorithm}
 
 In the presence of packet loss and duplication, that is possible with TCP Hollywood, the calculation 
-mechanisms for measurements have to be modified. BOLA algorithm is written for standard TCP, where HoL blocking means that the client must wait for all data to arrive. In TCP Hollywood, HoL blocking is eliminated, allowing the client to continue even if some data hasn't arrived. Therefore, we introduce a new parameter, $Rx_{T}$, the Receive Threshold: when the ratio of the bytes received in a chunk reaches $Rx_{T}$, the client continues with its rate adaptation as if the entire chunk had arrived. Care is needed when selecting the value of $Rx_{T}$,: if it is too low, the rate adaptation will be performed on a partial view of network conditions, which may result in selecting an unsuitable rate; picking $Rx_{T}$, too high would diminish the impact of eliminating HoL blocking. After experimenting with a range of $Rx_{T}$, values between 0.75 and 0.99, under stable network conditions, we chose 0.9. We found this value was sufficiently high to include the current chunk as part of the buffered duration (only 10\% of the chunk remains to be downloaded, with some data in-flight, and a limited number of messages that may be delayed and subsequently discarded by TCP Hollywood if they miss their deadline), and gather measurements for the next chunk, while sufficiently low as to enable the benefits of TCP Hollywood. Our experiments with $Rx_{T}$ only considered 1 second chunks, however, we expect this value to hold for other chunk durations. Finally, with TCP Hollywood, some messages may be discarded due to late arrival. In order to prevent over-estimation in the presence of losses, we reduce the length of the buffer level by one chunk duration. If the buffer level is under one chunk duration, the algorithm would any way select a low bit rate. In the current model, the algorithm does not differentiate between losses and would behave the same regardless of the type of loss. We discuss this further in section \ref{sec:other_testing} as an avenue for future work. The modified operation for TCP Hollywood is shown as Algorithm \ref{algo:tcph_dash}. Note that throughput estimations used by the BOLA algorithm, while not shown as part of the pseudocode for the sake of clarity, will also use only the partial download of the chunk. 
+mechanisms for measurements have to be modified. BOLA algorithm is written for standard TCP, where HoL blocking means that the client must wait for all data to arrive. In TCP Hollywood, HoL blocking is eliminated, allowing the client to continue even if some data hasn't arrived. Therefore, we introduce a new parameter, $Rx_{T}$, the Receive Threshold: when the ratio of the bytes received in a chunk reaches $Rx_{T}$, the client continues with its rate adaptation as if the entire chunk had arrived. Care is needed when selecting the value of $Rx_{T}$,: if it is too low, the rate adaptation will be performed on a partial view of network conditions, which may result in selecting an unsuitable rate; picking $Rx_{T}$, too high would diminish the impact of eliminating HoL blocking. After experimenting with a range of $Rx_{T}$, values between 0.75 and 0.99, under stable network conditions, we chose 0.9. We found this value was sufficiently high to include the current chunk as part of the buffered duration (only 10\% of the chunk remains to be downloaded, with some data in-flight, and a limited number of messages that may be delayed and subsequently discarded by TCP Hollywood if they miss their deadline), and gather measurements for the next chunk, while sufficiently low as to enable the benefits of TCP Hollywood. Our experiments with $Rx_{T}$ only considered 1 second chunks, however, we expect this value to hold for other chunk durations. Finally, with TCP Hollywood, some messages may be discarded due to late arrival. In order to prevent over-estimation in the presence of losses, we reduce the length of the buffer level by one chunk duration in this case. If the buffer level is under one chunk duration, the algorithm would any way select a low bit rate. In the current model, the algorithm does not differentiate between losses and would behave the same regardless of the type of loss. We discuss this further in section \ref{sec:other_testing} as an avenue for future work. The modified operation for TCP Hollywood is shown as Algorithm \ref{algo:tcph_dash}. Note that throughput estimations used by the BOLA algorithm, while not shown as part of the pseudocode for the sake of clarity, will also use only the partial download of the chunk. 
 
 \begin{algorithm}
 	\begin{algorithmic}[1]
@@ -133,9 +132,9 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 		\State $b_{now} \gets \textit{Current Buffer Length}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
-		\State $Rx_T \gets Minimum Receive Threshold$
-		\State $L \gets Losses since last download$
-		\State $T \gets Duration of Chunks$
+		\State $Rx_T \gets \textit{Receive Threshold}$
+		\State $L \gets \textit{Losses since last download}$
+		\State $T \gets \textit{Duration of chunk}$
 		\While {$\text{n} < \text{N}$}
 			\If {$b_{now} > B$}
 				\State $\Delta t \gets B - b_{now}$
