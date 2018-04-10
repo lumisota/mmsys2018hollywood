@@ -94,7 +94,7 @@ Our TCP Hollywood-based MPEG-DASH client uses the open-source BOLA
 client implementation, dash.js.\footnote{\url{https://github.com/Dash-Industry-Forum/dash.js/wiki}}
 BOLA uses the amount of video currently buffered to calculate the quality level (bit-rate
 level) for the next chunk. For live video, where buffer sizes are limited, the algorithm's implementation 
-uses throughput estimates to further reduce over-estimation and stalling, and an effective buffer level to prevent under-estimation. In the event that the buffered duration is not limited by network conditions but by the availability of the next chunk at the server (e.g., it has not been captured yet) or the size of the play-out buffer, the effective buffer level is used by the client to request higher quality chunks even when the actual buffered duration is low. The effective buffer level is determined by the time spent waiting before downloading the next chunk. Algorithm \ref{algo:tcp_dash} shows the operation of rate adaptation using BOLA in a typical TCP based DASH client. Note that the quality estimation logic of the BOLA algorithm was adapted from dash.js without any modifications and remains unchanged even for TCP Hollywood, hence we do not further explain the inner workings of the estimation process. 
+uses throughput estimates to further reduce over-estimation and stalling. Algorithm \ref{algo:tcp_dash} shows the operation of rate adaptation using BOLA in a typical TCP based DASH client. Note that the quality estimation logic of the BOLA algorithm was adapted from dash.js without any modifications and remains unchanged even for TCP Hollywood, hence we do not further explain the inner workings of the estimation process. 
 
 
 \begin{algorithm}[t!]
@@ -104,7 +104,6 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 		\State $N \gets \textit{Total number of chunks}$
 		\State $B \gets \textit{Maximum Buffer Length}$
 		\State $b_{now} \gets \textit{Current Buffer Length}$
-		\State $p \gets \textit{Placeholder for effective buffer level calculation}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
 		\State $Rx_T \gets Minimum Receive Threshold$
@@ -113,8 +112,7 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 				\State $\Delta t \gets B - b_{now}$
 				\State $WaitForDuration (\Delta t)$
 			\EndIf
-			\State $p \gets \Delta t$
-			\State ${q \gets GetBolaQualityEstimate(b_{now},  p)}$
+			\State ${q \gets GetBolaQualityEstimate(b_{now})}$
 			\State ${DownloadChunk(q, n)}$
 		\EndWhile
 		\EndProcedure
@@ -124,7 +122,7 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 \end{algorithm}
 
 In the presence of packet loss and duplication, that is possible with TCP Hollywood, the calculation 
-mechanisms for measurements have to be modified. BOLA algorithm is written for standard TCP, where HoL blocking means that the client must wait for all data to arrive. In TCP Hollywood, HoL blocking is eliminated, allowing the client to continue if even some data hasn't arrived. Therefore, we introduce a new parameter, $Rx_{T}$, the Receive Threshold: when the ratio of the bytes received in a chunk reaches $Rx_{T}$, the client continues with its rate adaptation as if the entire chunk had arrived. Care is needed when selecting the value of RxT: if it is too low, the rate adaptation will be performed on a partial view of network conditions, which may result in selecting an unsuitable rate; picking RxT too high would diminish the impact of eliminating HoL blocking. After experimenting with a range of RxT values between 0.75 and 0.99, under stable network conditions, we chose 0.9. We found this value was sufficiently high to include the current chunk as part of the buffered duration (only 10\% of the chunk remains to be downloaded, with some data in-flight, and a limited number of messages that may delayed and subsequently discarded by TCP Hollywood if they miss their deadline), and gather measurements for the next chunk, while sufficiently low as to enable the benefits of TCP Hollywood. While our experiments only considered 1 second chunks, we expect this value to hold for other chunk durations. The modified operation for TCP Hollywood is shown as Algorithm \ref{algo:tcph_dash}. Note that any throughput estimations used by the BOLA algorithm, while not shown as part of the pseudocode, will also use only the partial download of the chunk. 
+mechanisms for measurements have to be modified. BOLA algorithm is written for standard TCP, where HoL blocking means that the client must wait for all data to arrive. In TCP Hollywood, HoL blocking is eliminated, allowing the client to continue even if some data hasn't arrived. Therefore, we introduce a new parameter, $Rx_{T}$, the Receive Threshold: when the ratio of the bytes received in a chunk reaches $Rx_{T}$, the client continues with its rate adaptation as if the entire chunk had arrived. Care is needed when selecting the value of $Rx_{T}$,: if it is too low, the rate adaptation will be performed on a partial view of network conditions, which may result in selecting an unsuitable rate; picking $Rx_{T}$, too high would diminish the impact of eliminating HoL blocking. After experimenting with a range of $Rx_{T}$, values between 0.75 and 0.99, under stable network conditions, we chose 0.9. We found this value was sufficiently high to include the current chunk as part of the buffered duration (only 10\% of the chunk remains to be downloaded, with some data in-flight, and a limited number of messages that may be delayed and subsequently discarded by TCP Hollywood if they miss their deadline), and gather measurements for the next chunk, while sufficiently low as to enable the benefits of TCP Hollywood. Our experiments with $Rx_{T}$ only considered 1 second chunks, however, we expect this value to hold for other chunk durations. Finally, with TCP Hollywood, some messages may be discarded due to late arrival. In order to prevent over-estimation in the presence of losses, we reduce the length of the buffer level by one chunk duration. If the buffer level is under one chunk duration, the algorithm would any way select a low bit rate. In the current model, the algorithm does not differentiate between losses and would behave the same regardless of the type of loss. We discuss this further in section \ref{sec:other_testing} as an avenue for future work. The modified operation for TCP Hollywood is shown as Algorithm \ref{algo:tcph_dash}. Note that throughput estimations used by the BOLA algorithm, while not shown as part of the pseudocode for the sake of clarity, will also use only the partial download of the chunk. 
 
 \begin{algorithm}
 	\begin{algorithmic}[1]
@@ -133,21 +131,21 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 		\State $N \gets \textit{Total number of chunks}$
 		\State $B \gets \textit{Maximum Buffer Length}$
 		\State $b_{now} \gets \textit{Current Buffer Length}$
-		\State $p \gets \textit{Placeholder for effective buffer level calculation}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
 		\State $Rx_T \gets Minimum Receive Threshold$
 		\State $L \gets Losses since last download$
+		\State $T \gets Duration of Chunks$
 		\While {$\text{n} < \text{N}$}
 			\If {$b_{now} > B$}
 				\State $\Delta t \gets B - b_{now}$
 				\State $WaitForDuration (\Delta t)$
 			\EndIf
 			\State $p \gets \Delta t$
-			\If {$L > 0 and p > ChunkDuration $}
-				\State $p \gets p - ChunkDuration$
+			\If {$L > 0 \And b_{now} > T $}
+				\State $b_{now} \gets b_{now} - T$
 			\EndIf
-			\State ${q \gets GetBolaQualityEstimate(b_{now}, p)}$		
+			\State ${q \gets GetBolaQualityEstimate(b_{now})}$		
 			\State $InitiateChunkDownload(q, n)$
 			\State $WaitUntil (B_n^q < Rx_T * S_n^q)$
 		\EndWhile
@@ -157,4 +155,4 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 	\label{algo:tcph_dash}
 \end{algorithm}
 
-The $Rx_{T}$ parameter can be used with other adaptation algorithms as it impacts only the measurements and not the quality estimation. Preliminary testing for this study was carried out using both the buffer-based BOLA algorithm and the throughput-based PANDA algorithm \cite{li2014probe}. Generally, we found BOLA outperformed PANDA for standard TCP and TCP Hollywood, in terms of stall avoidance and bit rate switching, a finding confirmed by previous studies \cite{karagkioules2017comparative}. Note that the main advantages of TCP Hollywood (shown in Figure \ref{fig:hollywood_download}) are the removal of head-of-line (HoL) blocking, and the addition of chunk request pipelining and these remain regardless of the algorithm used. 
+The $Rx_{T}$ parameter can be used with other adaptation algorithms as it impacts only the measurements and not the quality estimation. Preliminary testing for this study was carried out using both the buffer-based BOLA algorithm and the throughput-based Probe And Adapt (PANDA) algorithm \cite{li2014probe}. Generally, we found BOLA outperformed PANDA for standard TCP and TCP Hollywood, in terms of stall avoidance and bit rate switching, a finding confirmed by previous studies \cite{karagkioules2017comparative}. Note that the main advantages of TCP Hollywood (shown in Figure \ref{fig:hollywood_download}) are the removal of head-of-line (HoL) blocking, and the addition of chunk request pipelining and these remain regardless of the algorithm used. 

@@ -38,7 +38,7 @@ PROTOCOLS   = tcp-1 tcph-0.9
 # Single network condition evaluations
 
 SN_PROFILES = r5lp2d150   r5lp2d200   r5lp2d250   r5lp2d300   r5lp2d350  \
-              r5lp2d400   r5d100l0p2  r5d100l0p4  r5d100l0p6  r5d100l0p8 \
+              r5lp2d400   r5d100l0   r5d100l0p2  r5d100l0p4  r5d100l0p6  r5d100l0p8 \
               r5d100l1p0
 SN_RUNS     = $(foreach PROTOCOL,$(PROTOCOLS),$(foreach RUN_NUMBER,$(RUN_NUMBERS),$(foreach PROFILE, $(SN_PROFILES), sn-$(PROTOCOL)-oo-16000-bola-$(PROFILE)-$(RUN_NUMBER))))
                   
