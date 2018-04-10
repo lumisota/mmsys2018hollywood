@@ -104,7 +104,7 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 		\State $N \gets \textit{Total number of chunks}$
 		\State $B \gets \textit{Maximum Buffer Length}$
 		\State $b_{now} \gets \textit{Current Buffer Length}$
-		\State $b_{e} \gets \textit{Effective Buffer Level}$
+		\State $p \gets \textit{Placeholder for effective buffer level calculation}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
 		\State $Rx_T \gets Minimum Receive Threshold$
@@ -113,8 +113,8 @@ uses throughput estimates to further reduce over-estimation and stalling, and an
 				\State $\Delta t \gets B - b_{now}$
 				\State $WaitForDuration (\Delta t)$
 			\EndIf
-			\State $b_{e} \gets b_{e} + \Delta t$
-			\State ${q \gets GetBolaQualityEstimate(b_{now},  b_{e})}$
+			\State $p \gets \Delta t$
+			\State ${q \gets GetBolaQualityEstimate(b_{now},  p)}$
 			\State ${DownloadChunk(q, n)}$
 		\EndWhile
 		\EndProcedure
@@ -133,7 +133,7 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 		\State $N \gets \textit{Total number of chunks}$
 		\State $B \gets \textit{Maximum Buffer Length}$
 		\State $b_{now} \gets \textit{Current Buffer Length}$
-		\State $b_{e} \gets \textit{Effective Buffer Level}$
+		\State $p \gets \textit{Placeholder for effective buffer level calculation}$
 		\State $S_n^q \gets \textit{Size of chunk with index n and quality q}$
 		\State $B_n^q  \gets \textit{Bytes received for chunk with index n and quality q }$
 		\State $Rx_T \gets Minimum Receive Threshold$
@@ -143,11 +143,11 @@ mechanisms for measurements have to be modified. BOLA algorithm is written for s
 				\State $\Delta t \gets B - b_{now}$
 				\State $WaitForDuration (\Delta t)$
 			\EndIf
-			\State $b_{e} \gets b_{e} + \Delta t$
-			\If {$L > 0$}
-				\State $b_{e} \gets b_{e} - ChunkDuration$
+			\State $p \gets \Delta t$
+			\If {$L > 0 and p > ChunkDuration $}
+				\State $p \gets p - ChunkDuration$
 			\EndIf
-			\State ${q \gets GetBolaQualityEstimate(b_{now},  b_{e})}$		
+			\State ${q \gets GetBolaQualityEstimate(b_{now}, p)}$		
 			\State $InitiateChunkDownload(q, n)$
 			\State $WaitUntil (B_n^q < Rx_T * S_n^q)$
 		\EndWhile

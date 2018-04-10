@@ -3,8 +3,8 @@
 
 In this section, we present the findings of our evaluation. All test cases were repeated
 ten times and the depicted values are trimmed averages taken after discarding the highest
-and lowest values. 
-% FIXME: why this, rather than presenting error bars? [csp]
+and lowest values. Furthermore, graphs contain error bars, which extend from the $20^{th}$ to $80^{th}$ percentile unless explicitly indicated otherwise. Note that due to the random nature of losses in the network emulated during testing, outliers are inevitable, which is why we have chosen to focus on the middle population of the values. To the best of our knowledge, this approach does not produce any bias towards either protocol. 
+% FIXME: why this, rather than presenting error bars? [csp] - done 
 
 \subsection{Stall Events}
 \label{sec:testing-stall}
@@ -219,8 +219,14 @@ bit-rate in our test videos and the buffer length was limited to 16 seconds, we 
 stall events, especially for the more aggressively changing profiles (profiles \emph{g} to
 \emph{l}). Generally, the use of TCP Hollywood lowered the stall events, as shown in Figure
 \ref{fig:stall_profiles}. Start-up delay was similar for clients using both protocols,
-although some profiles with longer network delays in the beginning benefited from the use of TCP
-Hollywood. 
+although some profiles with longer network delays in the beginning benefited from the use of TCP Hollywood as shown in Figure \ref{fig:startup_profiles}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/results/startup_vn_all.pdf}
+  \caption{Startup delays observed for different network profiles. }
+  \label{fig:startup_profiles}
+\end{figure}
 
 \begin{figure}
   \centering
@@ -229,7 +235,6 @@ Hollywood.
            latencies are under 20 ms and bandwidth levels between 9Mbps and 1Mbps. }
   \label{fig:stall_profiles}
 \end{figure}
-
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/qoe_vn_all.png}
@@ -244,7 +249,7 @@ Hollywood.
 A violin plot of the PSNR and SSIM values shows the frequency of each value in Figure 
 \ref{fig:qoe_profiles}. The similarity in the shape of the plot for clients using both 
 standard TCP and TCP Hollywood shows that both protocols downloaded similar quality chunks, 
-as observed in the average bit-rate results. The TCP Hollywood-based client had 
+as observed in the average bit-rate results shown in Figure \ref{fig:rate_profiles}. The TCP Hollywood-based client had 
 a lower number of downward rate switches than the standard TCP-based client for almost all 
 profiles, as shown in Figure \ref{fig:ratechange_profiles}. The client using BOLA working
 with TCP Hollywood generally adapted faster to a higher bit-rate and was able to sustain a
@@ -259,11 +264,18 @@ previously showed that the TCP Hollywood-based client does suffer from message l
 \emph{g} and future work should include exploring improvements in the adaptation algorithm to 
 limit the number of discarded messages in favour of stalls in the presence of high losses. 
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/results/bitrate_vn_all.pdf}
+  \caption{The average media bit rate was similar for all network profiles. The slight improvement for TCP Hollywood is further explained in Figure \ref{fig:adaptation_profile} }
+  \label{fig:rate_profiles}
+\end{figure}
+
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/ratedrops_vn_all.pdf}
-  \caption{Slight improvements in startup delay for all profiles is seen for TCP Hollywood. }
+  \caption{Fewer rate drops were observed over TCP Hollywood for all network profiles.}
   \label{fig:ratechange_profiles}
 \end{figure}
 
