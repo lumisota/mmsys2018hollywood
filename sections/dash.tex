@@ -18,7 +18,7 @@ terminology. The MPEG-DASH standard sends \emph{chunks}; these are groups of vid
 \emph{frames} that have the same duration. In our approach, the server will send these
 using TCP Hollywood \emph{messages}. A chunk may be split across more than one message,
 but a message will never contain data from more than one chunk. Finally, messages are
-send in TCP \emph{segments}; a segment may contain data from more than one message, and
+sent in TCP \emph{segments}; a segment may contain data from more than one message, and
 may contain only some of the data for a message.
 Figure \ref{fig:terminology} illustrates this terminology.
 
@@ -55,24 +55,19 @@ estimate of network conditions. This reduces the likelihood of an under or over 
 of performance, improving quality-of-experience. Further, HTTP/1.1 pipelining suffers
 from transport-layer head-of-line blocking in standard TCP, which is eliminated under TCP Hollywood.
 
-Finally, TCP Hollywood can discard late messages and continue play-out,
-thereby limiting stall events only to those cases when the play-out buffer is completely
+Finally, TCP Hollywood can discard late messages and continue delivering data to the application, thereby limiting stall events only to those cases when the play-out buffer is completely
 empty.
 
 \begin{figure}
     \centering
     \includegraphics[width=\columnwidth]{figures/tcph-download.pdf}
-    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood. The shaded area represents the measurement period for each chunk. }
+    \caption{An illustration of chunk download with HTTP over TCP and over TCP Hollywood. The TCP Hollywood client requests the next chunk while the current chunk is still downloading. The shaded area represents the measurement period for each chunk. }
     \label{fig:hollywood_download}
 \end{figure}
 
 The requested chunks of video are transmitted on a single stream, using fixed size
 messages. As the server is content-agnostic, it is unable to set an expiry time for messages, and
-all messages are sent reliably. A content-aware server would set this to the relative presentation time of the chunk.
-For the sake of simplicity, audio
-stream is not used. Each message is appended with a monotonically increasing sequence
-number and a stream offset. The stream offset is the offset of the last byte of the
-message within this stream, where a stream includes all chunks that have been transmitted
+all messages are sent reliably. A content-aware server would set this to the relative presentation time of the chunk, subsequently reducing unnecessary retransmissions. For the sake of simplicity, audio stream is not used. Each message is appended with a monotonically increasing sequence number and a stream offset. The stream offset is the offset of the last byte of the message within this stream, where a stream includes all chunks that have been transmitted
 previously. Both fields are used by the receiver to reorder the messages and detect
 losses. We expanded the function of the play-out buffer to include de-jittering and
 reordering of the incoming messages.
@@ -81,7 +76,7 @@ The commonly used ISO Base Media File Format (MP4) is not suitable for TCP Holly
 
 \subsection{Rate Adaptation Algorithms}
 
-Performance of a MPEG-DASH system relies heavily on a good rate adaptation algorithm.
+Performance of an MPEG-DASH system relies heavily on a good rate adaptation algorithm.
 Such algorithms use application-level measurements such as buffer length, throughput, time to
 download a chunk, or a combination of these to select an appropriate quality for
 download \cite{beben2016abma+, spiteri2016bola, li2014probe}. There is some consensus

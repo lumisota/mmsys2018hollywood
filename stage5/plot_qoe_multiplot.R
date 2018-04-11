@@ -80,13 +80,13 @@ dev.off()
 
 psub = subset(ptmp,Scheme == "Loss")
 ssub = subset(stmp,Scheme == "Loss")
-p0 = ggplot(psub, aes(as.factor(Loss), V9, fill = as.factor(V3)))+geom_boxplot(notch = T, colour = "black") + 
+p0 = ggplot(psub, aes(as.factor(Loss/100), V9, fill = as.factor(V3)))+geom_boxplot(notch = T, colour = "black") +
   theme_bw(base_size = 12)+ scale_colour_manual(values=c("red", "black")) + xlab("Network Loss Rate") + 
   ylab ("Frame PSNR") + theme(legend.position="bottom")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer()
 ylim1 = boxplot.stats(psub$V9)$stats[c(1, 5)]
 p1 = p0+ coord_cartesian(ylim = ylim1)
 
-s0 = ggplot(ssub, aes(as.factor(Loss), V9, fill = as.factor(V3)))+geom_boxplot(colour = "black") + 
+s0 = ggplot(ssub, aes(as.factor(Loss/100), V9, fill = as.factor(V3)))+geom_boxplot(colour = "black") +
   theme_bw(base_size = 12)+ xlab("Network Loss Rate") + ylab ("Frame SSIM") + theme(legend.position="bottom") +
   guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer()
 s1 = s0 + coord_cartesian(ylim = c(0.90,1.0))

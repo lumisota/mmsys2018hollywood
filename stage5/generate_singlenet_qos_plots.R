@@ -85,7 +85,7 @@ tmp = k[,list(stall = mean(TotalStallDur_ms,0.1), minstall = quantile(TotalStall
 tmp = merge(tmp, n, by = "Net")
 sub = subset(tmp,Scheme == "Loss")
 pdf("figures/results/stall_sn_delay_d100.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Loss), stall/1000, fill = as.factor(Prot))) +geom_bar(stat = "identity", position=position_dodge(), width=0.35, colour="black") + geom_errorbar(aes(ymin=minstall, ymax = maxstall), width=0.2, position = position_dodge(.35)) + xlab("Network Loss Rate") + ylab("Total Stall Duration (s)")+ theme_bw(base_size = 12) + theme(legend.position="top")+ theme(legend.title = element_blank()) + guides(fill = guide_legend(nrow = 1))+ scale_fill_brewer()) 
+print(ggplot(sub, aes(as.factor(Loss/100), stall/1000, fill = as.factor(Prot))) +geom_bar(stat = "identity", position=position_dodge(), width=0.35, colour="black") + geom_errorbar(aes(ymin=minstall, ymax = maxstall), width=0.2, position = position_dodge(.35)) + xlab("Network Loss Rate") + ylab("Total Stall Duration (s)")+ theme_bw(base_size = 12) + theme(legend.position="top")+ theme(legend.title = element_blank()) + guides(fill = guide_legend(nrow = 1))+ scale_fill_brewer())
 dev.off()
 
 sub = subset(tmp,Scheme == "Delay_p2Loss")
@@ -112,7 +112,7 @@ dev.off()
 
 sub = subset(tmp,Scheme == "Loss")
 pdf("figures/results/startup_sn_delay_d100.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Loss), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + theme_bw(base_size = 12) + xlab("Network Loss Rate")+ylab("Startup Delay (s)") + theme(legend.position="top") +guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
+print(ggplot(sub, aes(as.factor(Loss/100), sd, fill=as.factor(Prot)))+geom_bar(stat = "identity", position=position_dodge(), width=0.35,colour="black") + geom_errorbar(aes(ymin=minsdelay, ymax = maxsdelay), width=0.2, position = position_dodge(.35)) + theme_bw(base_size = 12) + xlab("Network Loss Rate")+ylab("Startup Delay (s)") + theme(legend.position="top") +guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
 
 ################################################################################################################
@@ -154,14 +154,14 @@ dev.off()
 sub = subset(tmp,Scheme == "Loss")
 
 pdf("figures/results/bitrate_sn_delay_d100.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Loss), rate/1000 ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
+print(ggplot(sub, aes(as.factor(Loss/100), rate/1000 ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
       + geom_errorbar(aes(ymin=(rate-sdrate)/1000, ymax = (rate+sdrate)/1000), width=0.20, position = position_dodge(.35))
       + theme_bw(base_size = 12) + xlab("Network Loss Rate") + ylab ("Average Media Bitrate") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
 
 pdf("figures/results/ratedrops_sn_delay_d100.pdf", height = 3)
-print(ggplot(sub, aes(as.factor(Loss), change ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
+print(ggplot(sub, aes(as.factor(Loss/100), change ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
       + geom_errorbar(aes(ymin=change-sdchange, ymax = change+sdchange), width=0.20, position = position_dodge(.35))
       + theme_bw(base_size = 12) + xlab("Network Loss Rate") + ylab ("Chunks with Rate Drops (%)") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())

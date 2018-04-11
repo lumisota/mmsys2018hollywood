@@ -104,12 +104,12 @@ the same level of video quality as a standard TCP-based client. Figure \ref{fig:
 shows the effect of network latency on the average bit-rate of the video chunks for each transport
 protocol. It can be seen that TCP Hollywood has a higher average bit-rate with a similar
 level of standard deviation when network delay is 150ms and 200ms. For higher network
-delay, TCP Hollywood continues to deliver chunks at a higher average bit-rate value than
+delay, TCP Hollywood continues to deliver chunks at a similar average bit-rate value than
 standard TCP. In general, standard TCP appears to be more stable, as exhibited by the
 percentage of chunks with a rate drop shown in Figure \ref{fig:ratechange_delay2}. A rate
 drop is counted each time a chunk is downloaded at a bit-rate which is lower than the chunk
 immediately before it. The difference in rate drops is equivalent to about 1 additional
-drop observed per minute for TCP Hollywood than for standard TCP.
+drop observed per minute for TCP Hollywood than for standard TCP. We show only the rate drops here as they have a higher impact on user experience than switching to a higher bit rate, however, the observed trends were similar for both. 
 
 \begin{figure}
   \centering
@@ -223,18 +223,22 @@ although some profiles with longer network delays in the beginning benefited fro
 
 \begin{figure}
   \centering
-  \includegraphics[width=\columnwidth]{figures/results/startup_vn_all.pdf}
-  \caption{Startup delays observed for different network profiles. }
-  \label{fig:startup_profiles}
-\end{figure}
-
-\begin{figure}
-  \centering
   \includegraphics[width=\columnwidth]{figures/results/stall_vn_all.pdf}
   \caption{Stall events are reduced for TCP Hollywood for all except profile k, where 
            latencies are under 20 ms and bandwidth levels between 9Mbps and 1Mbps. }
   \label{fig:stall_profiles}
 \end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\columnwidth]{figures/results/startup_vn_all.pdf}
+  \caption{Startup delays observed for different network profiles. }
+  \label{fig:startup_profiles}
+\end{figure}
+
+
+
+
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/qoe_vn_all.png}

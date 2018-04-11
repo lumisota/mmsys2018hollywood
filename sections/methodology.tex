@@ -45,7 +45,7 @@ test sequence. The encoding bit-rates ranged from 1200 to 5600kbps with a consta
 1920x1080p. The constant resolution eliminates the need for re-scaling in objective Quality of 
 Experience (QoE)
 computations, which require the videos to be of the same resolution. MPEG-TS
-are used to allow enable loss recovery. The use of MPEG-TS adds about a
+are used to allow loss recovery. The use of MPEG-TS adds about a
 10\% metadata overhead to the streams in our case (the use of MPEG-TS is not
 essential to our approach, and any encoding or container format that is robust to packet loss
 could be used). The encoding details for the different quality levels of
@@ -63,9 +63,7 @@ Quality of Service (QoS) and QoE metrics:
         client would wait for one additional chunk to be downloaded before resuming play-out
         when a stall occurs.
     \item[Adaptability and stability] \hfill \\
-        These are measured using two metrics: (i) the average bit-rate of the downloaded
-        chunks, and (ii) the percentage of chunks with a downward bit-rate switch during
-        play-out.
+        Adaptability is a measure of how quickly the adaptation algorithm can adapt to change in network conditions and stability is characterised by the client's ability to mitigate frequent bit rate fluctuations. These are measured using two metrics: (i) the average bit-rate of the downloaded chunks (adaptability), and (ii) the percentage of chunks with a downward bit-rate switch during play-out (stability).  
     \item[Objective QoE] \hfill \\
         To measure the level of distortion produced due to a discarded message, we use the 
         objective QoE metrics Peak Signal to Noise Ratio (PSNR) and Structural Similarity
