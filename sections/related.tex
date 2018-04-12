@@ -15,11 +15,11 @@ size of chunks; however, doing this leads to a significant increase in the numbe
 requests sent. Wei and Swaminathan \cite{wei2014} propose using HTTP/2's server push
 mechanism to reduce the number of requests, potentially only requiring a single HTTP
 request across the entire stream. Xiao et al. \cite{xiao2016dash2m} take a similar
-approach, but focus on mobile devices. While the use of HTTP/2 provides server push and
+approach, but focus on mobile devices. While HTTP/2 provides server push and
 multi-streaming (and so eliminates head-of-line blocking at the application-layer), using
 standard TCP means that the application will still be impacted by head-of-line blocking.
 In the event of loss, data will be delayed by more than one RTT \cite{mcquistin2016tcp2};
-this is problematic in low-latency applications. he use of multiple simultaneous
+this is problematic in low-latency applications. The use of multiple simultaneous
 TCP connections provides a delivery model that is analogous to a multi-streaming protocol.
 However, these connections do not share flow and congestion control state, which degrades
 their performance. Further, managing these connections introduces complexity at the
@@ -29,7 +29,7 @@ Our approach attempts to eliminate the latency associated with head-of-line bloc
 using TCP Hollywood, whose message-oriented unordered delivery model is well suited to
 low-latency applications. Other transport-layer solutions include QUIC
 \cite{draft-ietf-quic-transport-latest}, a UDP-based protocol with support for stream
-multiplexing. Importantly, evaluations conducted over QUIC \cite{bhat:2017:not-so-quic}
+multiplexing. Evaluations conducted over QUIC \cite{bhat:2017:not-so-quic}, without application-layer changes,
 have shown that MPEG-DASH QoE is degraded. 
 
 Neither of these approaches -- application-layer changes (e.g., using HTTP/2) or 
@@ -40,7 +40,7 @@ protocol. The application-layer modifications we propose here are likely to be c
 with other multi-streaming transport-layer protocols, including QUIC.
 
 Complementary latency-reducing approaches include a server and network-assisted variant
-of MPEG-DASH, SAND \cite{thomas2015enhancing}, is also in development, and will form part
+of MPEG-DASH, SAND \cite{thomas2015enhancing}; this is currently in development, and will form part
 of the MPEG-DASH standard. SAND enhances MPEG-DASH with asynchronous network-to-network
 and network-to-client quality-related message exchange. A Software Defined Networking
 (SDN) based approach has been shown to improve user QoE by providing the client with
