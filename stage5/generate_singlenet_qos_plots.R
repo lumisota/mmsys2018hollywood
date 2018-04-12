@@ -131,7 +131,7 @@ k$algo = ifelse(k$algo  == "bola", "BOLA", ifelse(k$algo  == "abma", "ABMA", ife
 k = k[k$totalchunksc > 100, ]
 k = as.data.table(k)
 
-tmp = k[,list(sdrate = mean(sd.rate, trim=0.1), rate = mean(av.rate, trim=0.1), change = mean(downswitch,0.1)*100/mean(totalchunksc), sdchange = sd.trim(downswitch, 0.1)*100/mean(totalchunksc)), by=c("net","prot", "rxbufratio")]
+tmp = k[,list(sdrate = mean(sd.rate, trim=0.1), rate = mean(av.rate, trim=0.1), change = mean(downswitch,0.1)*100/mean(totalchunksc), sdchange = sd.trim(downswitch, 0.1)*100/mean(totalchunksc), minchange = quantile(downswitch,0.2)*100/mean(totalchunksc), maxchange = quantile(downswitch,0.8)*100/mean(totalchunksc)), by=c("net","prot", "rxbufratio")]
 n = read.csv("stage5/networks.csv", head= T, sep= " ")
 tmp = merge(tmp, n, by.x = "net", by.y= "Net")
 
@@ -146,7 +146,7 @@ dev.off()
 
 pdf("figures/results/ratedrops_sn_loss_p2.pdf", height = 3)
 print(ggplot(sub, aes(as.factor(Delay), change ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
-      + geom_errorbar(aes(ymin=change-sdchange, ymax = change+sdchange), width=0.2, position = position_dodge(.35))
+      + geom_errorbar(aes(ymin=minchange, ymax = maxchange), width=0.2, position = position_dodge(.35))
       + theme_bw(base_size = 12)  + xlab("Network Latency (ms)") + ylab ("Chunks with Rate Drops (%)") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
@@ -162,7 +162,7 @@ dev.off()
 
 pdf("figures/results/ratedrops_sn_delay_d100.pdf", height = 3)
 print(ggplot(sub, aes(as.factor(Loss/100), change ,fill = as.factor(prot))) + geom_bar(stat = "identity", position=position_dodge(),  width=0.35,colour="black")
-      + geom_errorbar(aes(ymin=change-sdchange, ymax = change+sdchange), width=0.20, position = position_dodge(.35))
+      + geom_errorbar(aes(ymin=minchange, ymax = maxchange), width=0.20, position = position_dodge(.35))
       + theme_bw(base_size = 12) + xlab("Network Loss Rate") + ylab ("Chunks with Rate Drops (%)") 
       + theme(legend.position="top")+ guides(fill = guide_legend(nrow = 1))+theme(legend.title = element_blank())+ scale_fill_brewer())
 dev.off()
