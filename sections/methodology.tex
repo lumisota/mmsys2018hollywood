@@ -45,8 +45,8 @@ test sequence. The encoding bit-rates ranged from 1200 to 5600kbps with a consta
 1920x1080p. The constant resolution eliminates the need for re-scaling in objective Quality of 
 Experience (QoE)
 computations, which require the videos to be of the same resolution. MPEG-TS
-are used to allow loss recovery. The use of MPEG-TS adds about a
-10\% metadata overhead to the streams in our case (the use of MPEG-TS is not
+is used to allow loss recovery. The use of MPEG-TS adds about
+10\% in metadata overhead to the streams in our case (the use of MPEG-TS is not
 essential to our approach, and any encoding or container format that is robust to packet loss
 could be used). The encoding details for the different quality levels of
 the test sequence are given in Table \ref{tab:testvideos}.
@@ -76,3 +76,5 @@ Quality of Service (QoS) and QoE metrics:
 These metrics were chosen since they are widely used and have been shown to
 be representative of different aspects of the user experience for MPEG-DASH
 video.
+
+The code used in our evaluations is described in Appendix \ref{appendix:reproducibility}.
