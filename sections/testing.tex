@@ -33,7 +33,7 @@ retransmissions before requesting the next chunk, helping to avoid stalls.
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/stall_sn_loss_p2.pdf}
-  \caption{Stall events. Test networks were 5Mbps with 0.2\%loss with variable delay. The 
+  \caption{Stall events. Test networks were 5Mbps with 0.2\% loss with variable delay. The 
            client using standard TCP suffers more from stalls than the client using TCP Hollywood, 
            with the latter being able to minimise stalls in the presence of high network delay.}
   \label{fig:stall_delay2}
@@ -42,7 +42,7 @@ retransmissions before requesting the next chunk, helping to avoid stalls.
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/stall_sn_delay_d100.pdf}
-  \caption{Stall events. Test networks were 5Mbps with 100ms with variable loss rates. With 
+  \caption{Stall events. Test networks were 5Mbps with 100ms delay and variable loss rates. With 
            high loss rates, loss recovery can be delayed due to lost retransmissions, leading 
            to more stall events for client using standard TCP.}
   \label{fig:stall_loss}
@@ -52,7 +52,7 @@ When loss is high and delay is low, MPEG-DASH over TCP Hollywood and over standa
 generally have similar performance. As packet loss increases, the TCP Hollywood-based 
 client sees some performance benefit. Figure
 \ref{fig:stall_loss} shows the results when network latency is 100ms, line rate is 5Mbps
-and different network delays are used. When using loss rates of 0.6\% and 0.8\%, we
+and different network loss rates are used. When using loss rates of 0.6\% and 0.8\%, we
 observed that the TCP Hollywood-based client is able to avoid some stall events by discarding 
 some late arriving messages, however the benefit is very small in comparison to standard TCP 
 as loss recovery is fast at low RTTs. At loss rates of 1\%, we observe that the advantage 
@@ -82,7 +82,7 @@ shown in the graphs.
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/startup_sn_loss_p2.pdf}
-  \caption{Start-up delay. Test networks were 5Mbps with 0.2\%loss with variable delay. 
+  \caption{Start-up delay. Test networks were 5Mbps with 0.2\% loss with variable delay. 
            The higher the network latency, the greater the benefit of TCP Hollywood. }
   \label{fig:startup_delay2}
 \end{figure}
@@ -92,7 +92,8 @@ shown in the graphs.
   \centering
   \includegraphics[width=\columnwidth]{figures/results/startup_sn_delay_d100.pdf}
   \caption{Start-up delay. Test networks were 5Mbps with 100ms with variable loss rates.  
-           The start-up delay is slightly lower for the TCP Hollywood-based client.}
+           The start-up delay is slightly lower for the TCP Hollywood-based client, however, randomness of 
+           emulated losses makes the values unpredictable. }
   \label{fig:startup_loss}
 \end{figure}
 
@@ -102,20 +103,20 @@ by eliminating head-of-line blocking using TCP Hollywood, these improvements onl
 real significance if a TCP Hollywood-based client is able to deliver them while maintaining
 the same level of video quality as a standard TCP-based client. Figure \ref{fig:rate_delay2} 
 shows the effect of network latency on the average bit-rate of the video chunks for each transport
-protocol. It can be seen that TCP Hollywood has a higher average bit-rate with a similar
+protocol. The error bars indicate the standard deviation in the downloaded chunk bit-rate; a higher standard deviation indicates a higher range of bit-rate switching. It can be seen that TCP Hollywood has a higher average bit-rate with a similar
 level of standard deviation when network delay is 150ms and 200ms. For higher network
 delay, TCP Hollywood continues to deliver chunks at a similar average bit-rate value than
 standard TCP. In general, standard TCP appears to be more stable, as exhibited by the
 percentage of chunks with a rate drop shown in Figure \ref{fig:ratechange_delay2}. A rate
 drop is counted each time a chunk is downloaded at a bit-rate which is lower than the chunk
 immediately before it. The difference in rate drops is equivalent to about 1 additional
-drop observed per minute for TCP Hollywood than for standard TCP. We show only the rate drops here as they have a higher impact on user experience than switching to a higher bit rate, however, the observed trends were similar for both. 
+drop observed per minute for TCP Hollywood than for standard TCP. We show only the rate drops here as they have a higher impact on user experience than upward switching, however, the observed trends were similar for both. 
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/bitrate_sn_loss_p2.pdf}
-  \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\%loss with variable 
-           delay. The error bars represent standard deviation. For higher delay values, 
+  \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\% loss with variable 
+           delay. The error bars represent standard deviation, indicating bit-rate switching. For higher delay values, 
            standard TCP shows lower standard deviation because it remains mostly at the 
            lowest available bit-rate. }
   \label{fig:rate_delay2}
@@ -124,7 +125,7 @@ drop observed per minute for TCP Hollywood than for standard TCP. We show only t
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/ratedrops_sn_loss_p2.pdf}
-  \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\%loss with variable 
+  \caption{Adaptation and stability. Test networks were 5Mbps with 0.2\% loss with variable 
            delay. The graph shows the percentage of chunks that were downloaded at a lower 
            rate than the previous one. The standard TCP adaptation algorithm is more stable 
            for all networks. The test video had 597 chunks.}
