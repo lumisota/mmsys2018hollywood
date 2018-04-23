@@ -220,7 +220,7 @@ bit-rate in our test videos and the buffer length was limited to 16 seconds, we 
 stall events, especially for the more aggressively changing profiles (profiles \emph{g} to
 \emph{l}). Generally, the use of TCP Hollywood lowered the stall events, as shown in Figure
 \ref{fig:stall_profiles}. Start-up delay was similar for clients using both protocols,
-although some profiles with longer network delays in the beginning benefited from the use of TCP Hollywood as shown in Figure \ref{fig:startup_profiles}.
+although some profiles with longer network delays in the beginning benefited slightly from the use of TCP Hollywood as shown in Figure \ref{fig:startup_profiles}.
 
 \begin{figure}
   \centering
@@ -264,15 +264,14 @@ client would drop
 gradually. If the degradation lasted less than the 30 seconds defined by the profiles, as
 may be the case for real networks, the TCP Hollywood-based client is more likely to sustain 
 the current bit-rate without dropping at all. A sample bit-rate adaptation for network profile 
-\emph{g} is shown in Figure \ref{fig:adaptation_profile}. Note from Figure \ref{fig:qoe_profiles}
-previously showed that the TCP Hollywood-based client does suffer from message losses in profile 
+\emph{g} is shown in Figure \ref{fig:adaptation_profile}. Note from Figure \ref{fig:qoe_profiles} that the TCP Hollywood-based client does suffer from message losses in profile 
 \emph{g} and future work should include exploring improvements in the adaptation algorithm to 
-limit the number of discarded messages in favour of stalls in the presence of high losses. 
+limit the number of discarded messages in favour of stalls in the presence of high losses and possibly detecting and adapting differently for different kinds of loss.  
 
 \begin{figure}
   \centering
   \includegraphics[width=\columnwidth]{figures/results/bitrate_vn_all.pdf}
-  \caption{The average media bit rate was similar for all network profiles. The slight improvement for TCP Hollywood is further explained in Figure \ref{fig:adaptation_profile} }
+  \caption{The average media bit rate was similar for all network profiles. The slight improvement for TCP Hollywood is further explained in Figure \ref{fig:adaptation_profile}. }
   \label{fig:rate_profiles}
 \end{figure}
 

@@ -7,12 +7,12 @@ architecture involves a client requesting discrete chunks of media over HTTP, at
 determined by its adaptation algorithm. HAS protocols, by virtue of their use of chunked
 encodings and HTTP over TCP, introduce significant latency, and rely heavily upon
 buffering to maintain quality-of-experience. However, a previous study has shown that
-latency, in a local network, can be reduced to as low as 240ms. The cost of this was
+latency, in a local network, can be reduced to as low as 240ms\cite{bouzakaria2014overhead}. The cost of this was
 higher packaging overhead, with increases of up to 13\%.
 
 An obvious application-layer approach to reducing latency in MPEG-DASH is to reduce the
 size of chunks; however, doing this leads to a significant increase in the number of HTTP
-requests sent. Wei and Swaminathan \cite{wei2014} propose using HTTP/2's server push
+requests sent. Wei and Swaminathan \cite{wei2014low} propose using HTTP/2's server push
 mechanism to reduce the number of requests, potentially only requiring a single HTTP
 request across the entire stream. Xiao et al. \cite{xiao2016dash2m} take a similar
 approach, but focus on mobile devices. While HTTP/2 provides server push and
