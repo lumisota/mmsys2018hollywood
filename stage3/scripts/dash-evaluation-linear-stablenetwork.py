@@ -72,11 +72,9 @@ def hollywood():
         #Apply initial network conditions. 
         row = reader[0] 
         print row; 
-        Switch.cmdPrint('tc qdisc add dev switch1-eth1 root handle 1:0 tbf rate ' + row['bw'] +'kbit buffer 5000 latency 100ms');
-        Switch.cmdPrint('tc qdisc add dev switch1-eth1 parent 1:0 handle 10: netem loss ' + row['loss'] + '% delay ' + row['delay'] +'ms');
-        Switch.cmdPrint('tc qdisc add dev switch1-eth2 root handle 1:0 tbf rate ' + row['bw'] +'kbit buffer 5000 latency 100ms');
-        Switch.cmdPrint('tc qdisc add dev switch1-eth2 parent 1:0 handle 10: netem loss ' + row['loss'] + '% delay ' + row['delay'] +'ms');
-        Switch.cmdPrint('tc qdisc')
+        appServer.cmdPrint('tc qdisc add dev Server-eth0 root handle 1:0 tbf rate ' + row['bw'] +'kbit buffer 5000 latency 100ms');
+        appServer.cmdPrint('tc qdisc add dev Server-eth0 parent 1:0 handle 10: netem loss ' + row['loss'] + '% delay ' + row['delay'] +'ms');
+        appServer.cmdPrint('tc qdisc')
 
         #initialize client code
         appClient.cmdPrint('./httpc --mpd ' + appServer.IP() +'/BBB_8bitrates_hd/bunny_1080_simple_ts.mpd ' + oo + hollywood + algo +' --minrxratio ' + rxratio + ' --port 5678 --bufferlen ' + bufferlen + ' --out /vagrant/data/received.ts > /vagrant/data/' + runName + '.aclient-out & echo $! > receiver-pid')
