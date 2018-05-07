@@ -3,7 +3,7 @@
 library(ggplot2)
 library(data.table)
 
-k = read.csv("stage4/data/timeline_example_out.csv", head= F, sep = " ")
+k = read.csv("stage4/data/vn_timeline_example.csv", head= F, sep = " ")
 k$V1 = ifelse(k$V1 == "tcp", "TCP", ifelse(k$V1 == "tcph", "Hollywood", "HOLLYWOOD_SR"))
 
 pdf("figures/results/timeline_vn_example.pdf", height = 3)
